@@ -198,8 +198,17 @@
             margin-top: 0.5rem;
             color: var(--danger);
         }
+        
+        .power-draw.psu {
+            color: var(--success);
+        }
+
         body.dark-mode .power-draw {
             color: #fca5a5;
+        }
+        
+        body.dark-mode .power-draw.psu {
+            color: #6ee7b7;
         }
 
         .btn {
@@ -354,11 +363,12 @@
                 <label class="filter-label"><input type="checkbox" class="category-filter" value="GPU"> Graphics Cards (GPU)</label>
                 <label class="filter-label"><input type="checkbox" class="category-filter" value="RAM"> Memory (RAM)</label>
                 <label class="filter-label"><input type="checkbox" class="category-filter" value="Motherboard"> Motherboards</label>
+                <label class="filter-label"><input type="checkbox" class="category-filter" value="PSU"> Power Supply (PSU)</label>
             </div>
 
             <div class="filter-group">
-                <h3>Max Price: $<span id="priceValue">2000</span></h3>
-                <input type="range" id="priceRange" min="50" max="2000" value="2000" style="width: 100%;">
+                <h3>Max Price: $<span id="priceValue">2500</span></h3>
+                <input type="range" id="priceRange" min="50" max="2500" value="2500" style="width: 100%;">
             </div>
         </aside>
 
@@ -405,7 +415,7 @@
             }
         });
 
-        // --- Mock Database (100 Items Total: 25 CPU, 25 GPU, 25 RAM, 25 Motherboard) ---
+        // --- Mock Database (125 Items Total: 25 CPU, 25 GPU, 25 RAM, 25 Motherboard, 25 PSU) ---
         const partsDatabase = [
             // --- 25 CPUs ---
             { id: 1, name: "Intel Core i9-14900K", category: "CPU", price: 589, powerDraw: 253, specs: "24 Cores (8P+16E), 32 Threads, Up to 6.0 GHz" },
@@ -513,7 +523,34 @@
             { id: 97, name: "Gigabyte B650 AORUS ELITE AX", category: "Motherboard", price: 199, powerDraw: 30, specs: "AM5, ATX, PCIe 4.0, WiFi 6E" },
             { id: 98, name: "ASRock Z790 Taichi", category: "Motherboard", price: 479, powerDraw: 45, specs: "LGA 1700, E-ATX, PCIe 5.0, WiFi 6E, Thunderbolt 4" },
             { id: 99, name: "ASRock Z790 Steel Legend", category: "Motherboard", price: 230, powerDraw: 35, specs: "LGA 1700, ATX, PCIe 5.0, WiFi 6E" },
-            { id: 100, name: "ASRock X670E Taichi", category: "Motherboard", price: 499, powerDraw: 50, specs: "AM5, E-ATX, PCIe 5.0, WiFi 6E, USB4" }
+            { id: 100, name: "ASRock X670E Taichi", category: "Motherboard", price: 499, powerDraw: 50, specs: "AM5, E-ATX, PCIe 5.0, WiFi 6E, USB4" },
+
+            // --- 25 PSUs ---
+            { id: 101, name: "Corsair RM850x (2021)", category: "PSU", price: 149, powerDraw: 850, specs: "80+ Gold, Fully Modular, ATX" },
+            { id: 102, name: "Corsair RM1000x", category: "PSU", price: 189, powerDraw: 1000, specs: "80+ Gold, Fully Modular, ATX" },
+            { id: 103, name: "Corsair RM750e", category: "PSU", price: 99, powerDraw: 750, specs: "80+ Gold, Fully Modular, ATX 3.0 Compatible" },
+            { id: 104, name: "Corsair SF750", category: "PSU", price: 184, powerDraw: 750, specs: "80+ Platinum, Fully Modular, SFX Form Factor" },
+            { id: 105, name: "Corsair AX1600i", category: "PSU", price: 609, powerDraw: 1600, specs: "80+ Titanium, Fully Modular, Digital DSP" },
+            { id: 106, name: "EVGA SuperNOVA 850 G6", category: "PSU", price: 159, powerDraw: 850, specs: "80+ Gold, Fully Modular, Compact 140mm" },
+            { id: 107, name: "EVGA SuperNOVA 1000 GT", category: "PSU", price: 169, powerDraw: 1000, specs: "80+ Gold, Fully Modular, Auto Eco Mode" },
+            { id: 108, name: "EVGA SuperNOVA 750 P6", category: "PSU", price: 139, powerDraw: 750, specs: "80+ Platinum, Fully Modular" },
+            { id: 109, name: "Seasonic FOCUS GX-850", category: "PSU", price: 139, powerDraw: 850, specs: "80+ Gold, Fully Modular, 10 Year Warranty" },
+            { id: 110, name: "Seasonic PRIME TX-1000", category: "PSU", price: 319, powerDraw: 1000, specs: "80+ Titanium, Fully Modular, Micro Tolerance Load" },
+            { id: 111, name: "Seasonic FOCUS GX-750", category: "PSU", price: 119, powerDraw: 750, specs: "80+ Gold, Fully Modular" },
+            { id: 112, name: "Seasonic VERTEX GX-1200", category: "PSU", price: 289, powerDraw: 1200, specs: "80+ Gold, Fully Modular, ATX 3.0 / PCIe 5.0" },
+            { id: 113, name: "be quiet! Dark Power 13 850W", category: "PSU", price: 249, powerDraw: 850, specs: "80+ Titanium, Fully Modular, ATX 3.0" },
+            { id: 114, name: "be quiet! Straight Power 12 1000W", category: "PSU", price: 209, powerDraw: 1000, specs: "80+ Platinum, Fully Modular, ATX 3.0" },
+            { id: 115, name: "be quiet! Pure Power 12 M 750W", category: "PSU", price: 119, powerDraw: 750, specs: "80+ Gold, Fully Modular, ATX 3.0" },
+            { id: 116, name: "MSI MPG A850G PCIE5", category: "PSU", price: 149, powerDraw: 850, specs: "80+ Gold, Fully Modular, ATX 3.0 Ready" },
+            { id: 117, name: "MSI MEG Ai1300P", category: "PSU", price: 359, powerDraw: 1300, specs: "80+ Platinum, Fully Modular, ATX 3.0 Ready" },
+            { id: 118, name: "MSI MAG A650BN", category: "PSU", price: 65, powerDraw: 650, specs: "80+ Bronze, Non-Modular" },
+            { id: 119, name: "Thermaltake Toughpower GF3 850W", category: "PSU", price: 139, powerDraw: 850, specs: "80+ Gold, Fully Modular, ATX 3.0" },
+            { id: 120, name: "Thermaltake Toughpower GF1 750W", category: "PSU", price: 109, powerDraw: 750, specs: "80+ Gold, Fully Modular" },
+            { id: 121, name: "Cooler Master MWE Gold 850 V2", category: "PSU", price: 119, powerDraw: 850, specs: "80+ Gold, Fully Modular" },
+            { id: 122, name: "Cooler Master V1100 SFX Platinum", category: "PSU", price: 279, powerDraw: 1100, specs: "80+ Platinum, Fully Modular, SFX" },
+            { id: 123, name: "ASUS ROG Thor 1000W Platinum II", category: "PSU", price: 359, powerDraw: 1000, specs: "80+ Platinum, Fully Modular, OLED Display" },
+            { id: 124, name: "ASUS ROG Loki SFX-L 850W", category: "PSU", price: 219, powerDraw: 850, specs: "80+ Platinum, Fully Modular, SFX-L, ATX 3.0" },
+            { id: 125, name: "FSP Hydro G Pro 1000W", category: "PSU", price: 159, powerDraw: 1000, specs: "80+ Gold, Fully Modular, ATX 3.0" }
         ];
 
         // --- State ---
@@ -544,6 +581,11 @@
                 const isCompared = comparisonList.includes(part.id);
                 const btnClass = isCompared ? 'btn selected' : 'btn';
                 const btnText = isCompared ? '✓ Added to Compare' : 'Add to Compare';
+                
+                // If it's a PSU, format it as "Capacity" instead of "Power Draw"
+                const isPSU = part.category === 'PSU';
+                const powerLabel = isPSU ? `⚡ ${part.powerDraw}W Max Capacity` : `⚡ ${part.powerDraw}W Power Draw`;
+                const powerClass = isPSU ? 'power-draw psu' : 'power-draw';
 
                 const card = document.createElement('div');
                 card.className = 'card';
@@ -554,7 +596,7 @@
                     <div class="specs">
                         <strong>Specifications:</strong><br>
                         ${part.specs}<br>
-                        <span class="power-draw">⚡ ${part.powerDraw}W Power Draw</span>
+                        <span class="${powerClass}">${powerLabel}</span>
                     </div>
                     <button class="${btnClass}" onclick="toggleCompare(${part.id})">${btnText}</button>
                 `;
@@ -614,8 +656,11 @@
             itemsToCompare.forEach(item => { html += `<td class="price">$${item.price}</td>`; });
             html += '</tr>';
 
-            html += '<tr><td>Power Draw</td>';
-            itemsToCompare.forEach(item => { html += `<td><strong>${item.powerDraw}W</strong></td>`; });
+            html += '<tr><td>Power / Capacity</td>';
+            itemsToCompare.forEach(item => { 
+                const label = item.category === 'PSU' ? '(Max Capacity)' : '(Power Draw)';
+                html += `<td><strong>${item.powerDraw}W</strong> <br><span style="font-size:0.8em; color:var(--text-light)">${label}</span></td>`; 
+            });
             html += '</tr>';
 
             html += '<tr><td>Specifications</td>';
