@@ -8,23 +8,33 @@
         /* Light Mode (Default) Variables */
         :root {
             --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #10b981;
+            --success-hover: #059669;
+            --danger: #ef4444;
             --bg: #f8fafc;
             --surface: #ffffff;
             --text: #0f172a;
             --text-light: #64748b;
             --border: #e2e8f0;
             --shadow: rgba(0, 0, 0, 0.1);
+            --modal-overlay: rgba(0, 0, 0, 0.5);
         }
 
         /* Dark Mode Variables */
         body.dark-mode {
-            --primary: #3b82f6; /* Slightly lighter blue for dark backgrounds */
-            --bg: #0f172a;      /* Deep slate */
-            --surface: #1e293b; /* Lighter slate for cards/header */
-            --text: #f8fafc;    /* Near white */
+            --primary: #3b82f6; 
+            --primary-hover: #60a5fa;
+            --success: #10b981;
+            --success-hover: #34d399;
+            --danger: #f87171;
+            --bg: #0f172a;      
+            --surface: #1e293b; 
+            --text: #f8fafc;    
             --text-light: #94a3b8;
             --border: #334155;
             --shadow: rgba(0, 0, 0, 0.5);
+            --modal-overlay: rgba(15, 23, 42, 0.8);
         }
         
         body {
@@ -142,6 +152,8 @@
             border-radius: 8px;
             padding: 1.5rem;
             transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s, border-color 0.3s;
+            display: flex;
+            flex-direction: column;
         }
 
         .card:hover {
@@ -158,6 +170,7 @@
             font-weight: bold;
             display: inline-block;
             margin-bottom: 0.5rem;
+            width: fit-content;
         }
 
         .price {
@@ -172,6 +185,7 @@
             font-size: 0.9rem;
             line-height: 1.5;
             margin-bottom: 1.5rem;
+            flex-grow: 1;
         }
 
         .btn {
@@ -188,15 +202,120 @@
             transition: background-color 0.3s;
         }
         
-        .btn:hover {
-            background: #1d4ed8;
-        }
+        .btn:hover { background: var(--primary-hover); }
+
+        .btn.selected { background: var(--success); }
+        .btn.selected:hover { background: var(--success-hover); }
+
+        .btn-remove { background: var(--danger); width: auto; padding: 0.5rem 1rem;}
+        .btn-remove:hover { background: #b91c1c; }
 
         .no-results {
             text-align: center;
             color: var(--text-light);
             grid-column: 1 / -1;
             padding: 3rem;
+        }
+
+        /* --- Floating Compare Button --- */
+        .floating-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 15px -3px var(--shadow);
+            z-index: 99;
+            transition: transform 0.2s, background-color 0.3s;
+            display: none; /* Hidden by default */
+        }
+        .floating-btn:hover {
+            transform: scale(1.05);
+            background: var(--primary-hover);
+        }
+
+        /* --- Modal Styles --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--modal-overlay);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px var(--shadow);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .close-btn:hover {
+            color: var(--text);
+        }
+
+        /* --- Comparison Table Styles --- */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .compare-table th, .compare-table td {
+            padding: 1rem;
+            border: 1px solid var(--border);
+            min-width: 150px;
+            vertical-align: top;
+        }
+
+        .compare-table th {
+            background-color: var(--bg);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .compare-table td:first-child {
+            font-weight: bold;
+            background-color: var(--bg);
+            width: 150px;
         }
     </style>
 </head>
@@ -235,11 +354,25 @@
         </main>
     </div>
 
+    <!-- Floating Button -->
+    <button id="floatingCompareBtn" class="floating-btn">Compare (0)</button>
+
+    <!-- Comparison Modal -->
+    <div id="compareModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 style="margin: 0;">Side-by-Side Comparison</h2>
+                <button id="closeModalBtn" class="close-btn">&times;</button>
+            </div>
+            <div class="table-responsive" id="compareTableContainer">
+                <!-- Table generated by JS -->
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- Theme Toggle Logic ---
         const themeToggleBtn = document.getElementById('themeToggle');
-        
-        // Check for saved theme preference in LocalStorage
         const currentTheme = localStorage.getItem('theme');
         if (currentTheme === 'dark') {
             document.body.classList.add('dark-mode');
@@ -248,8 +381,6 @@
 
         themeToggleBtn.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
-            
-            // Update button text and save to LocalStorage
             if (document.body.classList.contains('dark-mode')) {
                 themeToggleBtn.textContent = '☀️ Light';
                 localStorage.setItem('theme', 'dark');
@@ -259,7 +390,7 @@
             }
         });
 
-        // --- Mock Database of PC Parts ---
+        // --- Mock Database ---
         const partsDatabase = [
             { id: 1, name: "Intel Core i9-14900K", category: "CPU", price: 589, specs: "24 Cores (8P+16E), 32 Threads, Up to 6.0 GHz" },
             { id: 2, name: "AMD Ryzen 7 7800X3D", category: "CPU", price: 399, specs: "8 Cores, 16 Threads, 3D V-Cache, Up to 5.0 GHz" },
@@ -272,14 +403,24 @@
             { id: 9, name: "NVIDIA GeForce RTX 4070 Super", category: "GPU", price: 599, specs: "12GB GDDR6X, 7168 CUDA Cores" }
         ];
 
+        // --- State ---
+        let currentFilteredProducts = partsDatabase;
+        let comparisonList = [];
+
         // --- DOM Elements ---
         const grid = document.getElementById('productGrid');
         const searchInput = document.getElementById('searchInput');
         const priceRange = document.getElementById('priceRange');
         const priceValue = document.getElementById('priceValue');
         const categoryCheckboxes = document.querySelectorAll('.category-filter');
+        const floatingCompareBtn = document.getElementById('floatingCompareBtn');
+        const compareModal = document.getElementById('compareModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const compareTableContainer = document.getElementById('compareTableContainer');
 
-        // --- Render Function ---
+        // --- Core Functions ---
+
+        // Render the main grid
         function renderProducts(products) {
             grid.innerHTML = '';
             
@@ -289,6 +430,10 @@
             }
 
             products.forEach(part => {
+                const isCompared = comparisonList.includes(part.id);
+                const btnClass = isCompared ? 'btn selected' : 'btn';
+                const btnText = isCompared ? '✓ Added to Compare' : 'Add to Compare';
+
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
@@ -299,13 +444,106 @@
                         <strong>Specifications:</strong><br>
                         ${part.specs}
                     </div>
-                    <button class="btn">Compare</button>
+                    <button class="${btnClass}" onclick="toggleCompare(${part.id})">${btnText}</button>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        // --- Filter Logic ---
+        // Handle adding/removing items from comparison
+        function toggleCompare(id) {
+            const index = comparisonList.indexOf(id);
+            if (index > -1) {
+                comparisonList.splice(index, 1); // Remove it
+            } else {
+                if (comparisonList.length >= 4) {
+                    alert("You can only compare up to 4 items side-by-side.");
+                    return;
+                }
+                comparisonList.push(id); // Add it
+            }
+            
+            // Re-render the grid to update button colors
+            renderProducts(currentFilteredProducts);
+            updateFloatingButton();
+            
+            // If the modal is currently open, update the table live
+            if (compareModal.style.display === 'flex') {
+                renderComparisonTable();
+                if(comparisonList.length === 0) closeModal(); // Close if empty
+            }
+        }
+
+        function updateFloatingButton() {
+            if (comparisonList.length > 0) {
+                floatingCompareBtn.style.display = 'block';
+                floatingCompareBtn.textContent = `View Comparison (${comparisonList.length})`;
+            } else {
+                floatingCompareBtn.style.display = 'none';
+            }
+        }
+
+        // Generate the HTML table for the modal
+        function renderComparisonTable() {
+            if (comparisonList.length === 0) {
+                compareTableContainer.innerHTML = '<p>No items selected.</p>';
+                return;
+            }
+
+            const itemsToCompare = comparisonList.map(id => partsDatabase.find(p => p.id === id));
+
+            let html = '<table class="compare-table">';
+            
+            // Row 1: Header/Names
+            html += '<tr><th>Feature</th>';
+            itemsToCompare.forEach(item => {
+                html += `<th>${item.name}</th>`;
+            });
+            html += '</tr>';
+
+            // Row 2: Category
+            html += '<tr><td>Category</td>';
+            itemsToCompare.forEach(item => {
+                html += `<td><span class="category-badge">${item.category}</span></td>`;
+            });
+            html += '</tr>';
+
+            // Row 3: Price
+            html += '<tr><td>Price</td>';
+            itemsToCompare.forEach(item => {
+                html += `<td class="price">$${item.price}</td>`;
+            });
+            html += '</tr>';
+
+            // Row 4: Specifications
+            html += '<tr><td>Specifications</td>';
+            itemsToCompare.forEach(item => {
+                html += `<td>${item.specs}</td>`;
+            });
+            html += '</tr>';
+
+            // Row 5: Action (Remove)
+            html += '<tr><td></td>';
+            itemsToCompare.forEach(item => {
+                html += `<td><button class="btn btn-remove" onclick="toggleCompare(${item.id})">Remove</button></td>`;
+            });
+            html += '</tr>';
+
+            html += '</table>';
+            compareTableContainer.innerHTML = html;
+        }
+
+        // Modal Controls
+        function openModal() {
+            renderComparisonTable();
+            compareModal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            compareModal.style.display = 'none';
+        }
+
+        // Filter Logic
         function filterProducts() {
             const searchTerm = searchInput.value.toLowerCase();
             const maxPrice = parseInt(priceRange.value);
@@ -314,7 +552,7 @@
                 .filter(cb => cb.checked)
                 .map(cb => cb.value);
 
-            const filtered = partsDatabase.filter(part => {
+            currentFilteredProducts = partsDatabase.filter(part => {
                 const matchesSearch = part.name.toLowerCase().includes(searchTerm) || 
                                       part.specs.toLowerCase().includes(searchTerm);
                 const matchesPrice = part.price <= maxPrice;
@@ -323,7 +561,7 @@
                 return matchesSearch && matchesPrice && matchesCategory;
             });
 
-            renderProducts(filtered);
+            renderProducts(currentFilteredProducts);
         }
 
         // --- Event Listeners ---
@@ -336,6 +574,16 @@
 
         categoryCheckboxes.forEach(cb => {
             cb.addEventListener('change', filterProducts);
+        });
+
+        floatingCompareBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+        
+        // Close modal if user clicks outside of the modal content area
+        compareModal.addEventListener('click', (e) => {
+            if (e.target === compareModal) {
+                closeModal();
+            }
         });
 
         // Initial Render
