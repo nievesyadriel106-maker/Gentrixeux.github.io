@@ -5,20 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PC Part Compare</title>
     <style>
-        /* Light Mode Variables */
+        /* Light Mode (Default) Variables */
         :root {
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
-            --success: #059669; 
-            --success-hover: #047857;
-            --danger: #dc2626; 
+            --success: #10b981;
+            --success-hover: #059669;
+            --danger: #ef4444;
             --bg: #f8fafc;
             --surface: #ffffff;
             --text: #0f172a;
-            --text-light: #475569; 
-            --border: #cbd5e1;
+            --text-light: #64748b;
+            --border: #e2e8f0;
             --shadow: rgba(0, 0, 0, 0.1);
-            --modal-overlay: rgba(0, 0, 0, 0.6);
+            --modal-overlay: rgba(0, 0, 0, 0.5);
         }
 
         /* Dark Mode Variables */
@@ -27,170 +27,376 @@
             --primary-hover: #60a5fa;
             --success: #10b981;
             --success-hover: #34d399;
-            --danger: #ef4444;
+            --danger: #f87171;
             --bg: #0f172a;      
             --surface: #1e293b; 
             --text: #f8fafc;    
-            --text-light: #cbd5e1; 
+            --text-light: #94a3b8;
             --border: #334155;
             --shadow: rgba(0, 0, 0, 0.5);
-            --modal-overlay: rgba(15, 23, 42, 0.85);
+            --modal-overlay: rgba(15, 23, 42, 0.8);
         }
         
-        *:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
-
         body {
             font-family: system-ui, -apple-system, sans-serif;
             background-color: var(--bg);
             color: var(--text);
-            margin: 0; padding: 0;
-            display: flex; flex-direction: column; min-height: 100vh;
-            font-size: 16px; line-height: 1.6; transition: background-color 0.3s, color 0.3s;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         header {
             background-color: var(--surface);
-            padding: 1.25rem 2rem; border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 20;
-            box-shadow: 0 4px 6px -1px var(--shadow); flex-wrap: wrap; gap: 1rem;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            transition: background-color 0.3s, border-color 0.3s;
         }
 
-        header h2 { margin: 0; font-size: 1.5rem; }
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
 
-        .header-controls { display: flex; gap: 1rem; align-items: center; flex: 1; justify-content: flex-end; }
-        .search-container { flex: 1; max-width: 400px; }
         .search-container input {
-            padding: 0.85rem 1rem; width: 100%; box-sizing: border-box;
-            border: 2px solid var(--border); border-radius: 8px; font-size: 1rem;
-            background-color: var(--bg); color: var(--text); transition: all 0.2s;
+            padding: 0.75rem;
+            width: 300px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: all 0.3s;
         }
-        .search-container input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); }
+
+        .search-container input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
 
         .theme-toggle {
-            background: var(--surface); color: var(--text); border: 2px solid var(--border);
-            padding: 0.85rem 1.25rem; border-radius: 8px; cursor: pointer;
-            font-size: 1rem; font-weight: bold; transition: all 0.2s;
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s;
         }
-        .theme-toggle:hover { background: var(--bg); border-color: var(--primary); }
 
-        .layout { display: flex; flex: 1; padding: 2rem; gap: 2rem; max-width: 1500px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        .theme-toggle:hover {
+            background: var(--bg);
+        }
+
+        .layout {
+            display: flex;
+            flex: 1;
+            padding: 2rem;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
         .sidebar {
-            width: 280px; background: var(--surface); padding: 1.5rem;
-            border-radius: 12px; border: 1px solid var(--border); height: fit-content;
-            position: sticky; top: 100px;
+            width: 250px;
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            height: fit-content;
+            transition: background-color 0.3s, border-color 0.3s;
         }
-        .filter-group { margin-bottom: 2rem; }
-        .filter-group h3 { margin-top: 0; font-size: 1.2rem; margin-bottom: 1rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
-        .filter-label { display: flex; align-items: center; margin-bottom: 0.75rem; cursor: pointer; font-size: 1.05rem; }
-        .filter-label input[type="checkbox"] { width: 1.25rem; height: 1.25rem; margin-right: 0.75rem; cursor: pointer; }
-        input[type="range"] { width: 100%; height: 8px; border-radius: 4px; cursor: pointer; }
 
-        .main-content { flex: 1; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
 
-        .card {
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 12px; padding: 1.75rem; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-            display: flex; flex-direction: column; box-shadow: 0 4px 6px -1px var(--shadow);
+        .filter-group h3 {
+            margin-top: 0;
+            font-size: 1.1rem;
+        }
+
+        .filter-label {
+            display: block;
+            margin-bottom: 0.5rem;
             cursor: pointer;
         }
-        .card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px var(--shadow); border-color: var(--primary); }
 
-        .card-img { 
-            width: 100%; height: 200px; object-fit: contain; border-radius: 8px; 
-            margin-bottom: 1rem; background-color: #ffffff; border: 1px solid var(--border); padding: 0.5rem; box-sizing: border-box;
+        .main-content {
+            flex: 1;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s, border-color 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px var(--shadow);
+        }
+
+        /* --- Image Styles --- */
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            margin-bottom: 1rem;
+            background-color: white; /* Good for transparent pngs in dark mode */
+            border-radius: 6px;
+            padding: 0.5rem;
+            box-sizing: border-box;
+            border: 1px solid var(--border);
         }
         
-        .category-badge { background: var(--primary); color: white; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; margin-bottom: 0.75rem; width: fit-content; }
-        .card h3 { font-size: 1.25rem; margin: 0.25rem 0; }
-        .price { font-size: 1.75rem; font-weight: 800; color: var(--text); margin: 1rem 0; }
-        .specs { color: var(--text-light); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem; flex-grow: 1; }
-        .specs strong { color: var(--text); display: block; margin-bottom: 0.25rem; }
+        .no-image {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg);
+            color: var(--text-light);
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
 
-        .power-draw { display: inline-block; background-color: var(--bg); border: 1px solid var(--border); padding: 0.35rem 0.75rem; border-radius: 6px; font-weight: bold; margin-top: 0.75rem; color: var(--danger); font-size: 0.95rem; }
-        .power-draw.psu { color: var(--success); }
-        body.dark-mode .power-draw { color: #fca5a5; }
-        body.dark-mode .power-draw.psu { color: #6ee7b7; }
+        .category-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            width: fit-content;
+        }
 
-        .btn { display: block; width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1.05rem; font-weight: bold; text-align: center; transition: background-color 0.2s, transform 0.1s; margin-top: 1rem; }
+        .price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text);
+            margin: 1rem 0;
+        }
+
+        .specs {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .power-draw {
+            display: inline-block;
+            background-color: var(--bg);
+            border: 1px solid var(--border);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 0.5rem;
+            color: var(--danger);
+        }
+        body.dark-mode .power-draw {
+            color: #fca5a5;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            text-align: center;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+        
         .btn:hover { background: var(--primary-hover); }
-        .btn:active { transform: scale(0.98); } 
-        .btn.selected { background: var(--success); border: 2px solid transparent; }
+
+        .btn.selected { background: var(--success); }
         .btn.selected:hover { background: var(--success-hover); }
-        .btn-remove { background: var(--danger); width: auto; padding: 0.5rem 1rem; margin-top: 0; }
+
+        .btn-remove { background: var(--danger); width: auto; padding: 0.5rem 1rem; margin-top: 0;}
         .btn-remove:hover { background: #b91c1c; }
 
-        .no-results { text-align: center; color: var(--text-light); grid-column: 1 / -1; padding: 4rem 2rem; background: var(--surface); border-radius: 12px; border: 1px dashed var(--border); }
+        .no-results {
+            text-align: center;
+            color: var(--text-light);
+            grid-column: 1 / -1;
+            padding: 3rem;
+        }
 
-        .floating-btn { position: fixed; bottom: 2rem; right: 2rem; background: var(--primary); color: white; border: none; padding: 1.25rem 2.5rem; border-radius: 50px; font-size: 1.15rem; font-weight: bold; cursor: pointer; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); z-index: 99; transition: transform 0.2s, background-color 0.3s; display: none; }
-        .floating-btn:hover { transform: scale(1.05) translateY(-5px); background: var(--primary-hover); }
+        /* --- Floating Compare Button --- */
+        .floating-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 15px -3px var(--shadow);
+            z-index: 99;
+            transition: transform 0.2s, background-color 0.3s;
+            display: none;
+        }
+        .floating-btn:hover {
+            transform: scale(1.05);
+            background: var(--primary-hover);
+        }
 
-        /* --- Modals Styles --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(6px); }
-        .modal-content { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 95%; max-width: 1200px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
-        .details-modal-content { max-width: 900px; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; border-bottom: 2px solid var(--border); }
-        .modal-header h2 { margin: 0; font-size: 1.5rem; }
+        /* --- Modal Styles --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--modal-overlay);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px var(--shadow);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .close-btn:hover {
+            color: var(--text);
+        }
+
+        /* --- Comparison Table Styles --- */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .compare-table th, .compare-table td {
+            padding: 1rem;
+            border: 1px solid var(--border);
+            min-width: 150px;
+            vertical-align: top;
+        }
+
+        .compare-table th {
+            background-color: var(--bg);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
         
-        .close-btn { background: var(--bg); border: 1px solid var(--border); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: var(--text); font-size: 1.5rem; cursor: pointer; transition: all 0.2s; }
-        .close-btn:hover { background: var(--danger); color: white; border-color: var(--danger); }
-
-        .details-body { display: flex; gap: 2rem; padding: 2rem; overflow-y: auto; }
-        .details-image { flex: 1; border-radius: 12px; object-fit: contain; width: 100%; max-width: 400px; height: auto; border: 1px solid var(--border); background-color: #ffffff; padding: 1rem;}
-        .details-info { flex: 1.5; display: flex; flex-direction: column; gap: 1rem; }
-        .details-specs-list { list-style: none; padding: 0; margin: 0; }
-        .details-specs-list li { padding: 0.75rem 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
-        .details-specs-list li strong { color: var(--text); }
-        .details-specs-list li span { color: var(--text-light); text-align: right; }
+        .compare-table td:first-child {
+            font-weight: bold;
+            background-color: var(--bg);
+            width: 150px;
+        }
         
-        .table-responsive { padding: 2rem; overflow-x: auto; flex: 1; }
-        .compare-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .compare-table th, .compare-table td { padding: 1.25rem; border: 1px solid var(--border); min-width: 200px; vertical-align: middle; }
-        .compare-table th { background-color: var(--bg); font-weight: 800; font-size: 1.15rem; }
-        .compare-table td:first-child { font-weight: bold; background-color: var(--bg); width: 180px; position: sticky; left: 0; z-index: 2; }
-        .compare-table th:first-child { position: sticky; left: 0; z-index: 3; }
-        .table-img { width: 100%; max-width: 150px; border-radius: 8px; border: 1px solid var(--border); background-color: #ffffff; }
-
-        @media (max-width: 900px) {
-            .layout { flex-direction: column; padding: 1rem; }
-            .sidebar { width: 100%; position: relative; top: 0; display: flex; flex-direction: column; gap: 1rem; }
-            .header-controls { flex-direction: column-reverse; width: 100%; align-items: stretch; }
-            .search-container { max-width: 100%; }
-            .grid { grid-template-columns: 1fr; }
-            .floating-btn { bottom: 1rem; right: 1rem; left: 1rem; width: calc(100% - 2rem); text-align: center; border-radius: 12px; }
-            .table-responsive { padding: 1rem; }
-            .details-body { flex-direction: column; }
-            .details-image { max-width: 100%; }
+        .compare-table-img {
+            width: 100%;
+            max-width: 120px;
+            height: auto;
+            display: block;
+            margin-top: 0.5rem;
+            background: white;
+            border-radius: 4px;
+            padding: 0.25rem;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h2>💻 PC Part Compare</h2>
+        <h2>PC Part Compare</h2>
         <div class="header-controls">
             <div class="search-container">
-                <input type="text" id="searchInput" aria-label="Search components" placeholder="Search for CPUs, GPUs, RAM...">
+                <input type="text" id="searchInput" placeholder="Search components...">
             </div>
-            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">🌙 Dark Mode</button>
+            <button id="themeToggle" class="theme-toggle">🌙 Dark</button>
         </div>
     </header>
 
     <div class="layout">
         <aside class="sidebar">
             <div class="filter-group">
-                <h3>Select Categories</h3>
+                <h3>Category</h3>
                 <label class="filter-label"><input type="checkbox" class="category-filter" value="CPU"> Processors (CPU)</label>
                 <label class="filter-label"><input type="checkbox" class="category-filter" value="GPU"> Graphics Cards (GPU)</label>
                 <label class="filter-label"><input type="checkbox" class="category-filter" value="RAM"> Memory (RAM)</label>
                 <label class="filter-label"><input type="checkbox" class="category-filter" value="Motherboard"> Motherboards</label>
-                <label class="filter-label"><input type="checkbox" class="category-filter" value="PSU"> Power Supply (PSU)</label>
             </div>
 
             <div class="filter-group">
-                <h3>Max Price: $<span id="priceValue">2500</span></h3>
-                <input type="range" id="priceRange" min="50" max="2500" value="2500" aria-label="Adjust maximum price">
+                <h3>Max Price: $<span id="priceValue">2000</span></h3>
+                <input type="range" id="priceRange" min="50" max="2000" value="2000" style="width: 100%;">
             </div>
         </aside>
 
@@ -201,227 +407,152 @@
         </main>
     </div>
 
-    <button id="floatingCompareBtn" class="floating-btn">View Comparison (0)</button>
+    <!-- Floating Button -->
+    <button id="floatingCompareBtn" class="floating-btn">Compare (0)</button>
 
     <!-- Comparison Modal -->
-    <div id="compareModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="compareTitle">
+    <div id="compareModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="compareTitle">Side-by-Side Comparison</h2>
-                <button id="closeCompareBtn" class="close-btn" aria-label="Close modal">&times;</button>
+                <h2 style="margin: 0;">Side-by-Side Comparison</h2>
+                <button id="closeModalBtn" class="close-btn">&times;</button>
             </div>
-            <div class="table-responsive" id="compareTableContainer"></div>
-        </div>
-    </div>
-
-    <!-- Product Details Modal -->
-    <div id="detailsModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="detailsTitle">
-        <div class="modal-content details-modal-content">
-            <div class="modal-header">
-                <h2 id="detailsTitle">Part Name</h2>
-                <button id="closeDetailsBtn" class="close-btn" aria-label="Close details modal">&times;</button>
+            <div class="table-responsive" id="compareTableContainer">
+                <!-- Table generated by JS -->
             </div>
-            <div class="details-body" id="detailsBody"></div>
         </div>
     </div>
 
     <script>
-        // Static Reliable Image Links (Real Product Images)
-        const IMAGES = {
-            intelCPU: "https://m.media-amazon.com/images/I/61NlMknXm7L._AC_SL1500_.jpg",
-            amdCPU: "https://m.media-amazon.com/images/I/616q1Q5Z71L._AC_SL1500_.jpg",
-            nvidiaGPU: "https://m.media-amazon.com/images/I/81X0F+OudtL._AC_SL1500_.jpg",
-            amdGPU: "https://m.media-amazon.com/images/I/81V+t1jFmVL._AC_SL1500_.jpg",
-            corsairRAM: "https://m.media-amazon.com/images/I/61oXm-WzU8L._AC_SL1500_.jpg",
-            gskillRAM: "https://m.media-amazon.com/images/I/61gG8P0qWCL._AC_SL1500_.jpg",
-            genericRAM: "https://m.media-amazon.com/images/I/619T-N-D69L._AC_SL1500_.jpg",
-            asusMobo: "https://m.media-amazon.com/images/I/81O+z8mS78L._AC_SL1500_.jpg",
-            msiMobo: "https://m.media-amazon.com/images/I/81c0HOfbIYL._AC_SL1500_.jpg",
-            gigabyteMobo: "https://m.media-amazon.com/images/I/817E1o5p1vL._AC_SL1500_.jpg",
-            corsairPSU: "https://m.media-amazon.com/images/I/61c1G9P9y9L._AC_SL1500_.jpg",
-            evgaPSU: "https://m.media-amazon.com/images/I/71zB6yXqQ1L._AC_SL1500_.jpg"
-        };
-
         // --- Theme Toggle Logic ---
         const themeToggleBtn = document.getElementById('themeToggle');
         const currentTheme = localStorage.getItem('theme');
         if (currentTheme === 'dark') {
             document.body.classList.add('dark-mode');
-            themeToggleBtn.innerHTML = '☀️ Light Mode';
+            themeToggleBtn.textContent = '☀️ Light';
         }
+
         themeToggleBtn.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
             if (document.body.classList.contains('dark-mode')) {
-                themeToggleBtn.innerHTML = '☀️ Light Mode';
+                themeToggleBtn.textContent = '☀️ Light';
                 localStorage.setItem('theme', 'dark');
             } else {
-                themeToggleBtn.innerHTML = '🌙 Dark Mode';
+                themeToggleBtn.textContent = '🌙 Dark';
                 localStorage.setItem('theme', 'light');
             }
         });
 
-        // --- Mock Database (125 Items) with Hardcoded Static Images ---
-        let partsDatabase = [
-            // --- CPUs ---
-            { id: 1, name: "Intel Core i9-14900K", category: "CPU", price: 589, powerDraw: 253, image: IMAGES.intelCPU, specs: "24 Cores (8P+16E), 32 Threads, Up to 6.0 GHz" },
-            { id: 2, name: "Intel Core i7-14700K", category: "CPU", price: 399, powerDraw: 253, image: IMAGES.intelCPU, specs: "20 Cores (8P+12E), 28 Threads, Up to 5.6 GHz" },
-            { id: 3, name: "Intel Core i5-14600K", category: "CPU", price: 299, powerDraw: 181, image: IMAGES.intelCPU, specs: "14 Cores (6P+8E), 20 Threads, Up to 5.3 GHz" },
-            { id: 4, name: "Intel Core i9-13900K", category: "CPU", price: 549, powerDraw: 253, image: IMAGES.intelCPU, specs: "24 Cores, 32 Threads, Up to 5.8 GHz" },
-            { id: 5, name: "Intel Core i7-13700K", category: "CPU", price: 365, powerDraw: 253, image: IMAGES.intelCPU, specs: "16 Cores, 24 Threads, Up to 5.4 GHz" },
-            { id: 6, name: "Intel Core i5-13600K", category: "CPU", price: 285, powerDraw: 181, image: IMAGES.intelCPU, specs: "14 Cores, 20 Threads, Up to 5.1 GHz" },
-            { id: 7, name: "Intel Core i5-13400F", category: "CPU", price: 185, powerDraw: 65, image: IMAGES.intelCPU, specs: "10 Cores, 16 Threads, Up to 4.6 GHz" },
-            { id: 8, name: "Intel Core i3-13100F", category: "CPU", price: 110, powerDraw: 58, image: IMAGES.intelCPU, specs: "4 Cores, 8 Threads, Up to 4.5 GHz" },
-            { id: 9, name: "Intel Core i9-12900K", category: "CPU", price: 345, powerDraw: 241, image: IMAGES.intelCPU, specs: "16 Cores, 24 Threads, Up to 5.2 GHz" },
-            { id: 10, name: "Intel Core i7-12700K", category: "CPU", price: 235, powerDraw: 190, image: IMAGES.intelCPU, specs: "12 Cores, 20 Threads, Up to 5.0 GHz" },
-            { id: 11, name: "Intel Core i5-12600K", category: "CPU", price: 175, powerDraw: 150, image: IMAGES.intelCPU, specs: "10 Cores, 16 Threads, Up to 4.9 GHz" },
-            { id: 12, name: "Intel Core i5-12400F", category: "CPU", price: 135, powerDraw: 65, image: IMAGES.intelCPU, specs: "6 Cores, 12 Threads, Up to 4.4 GHz" },
-            { id: 13, name: "AMD Ryzen 9 7950X3D", category: "CPU", price: 649, powerDraw: 120, image: IMAGES.amdCPU, specs: "16 Cores, 32 Threads, 144MB Cache, Up to 5.7 GHz" },
-            { id: 14, name: "AMD Ryzen 9 7950X", category: "CPU", price: 549, powerDraw: 170, image: IMAGES.amdCPU, specs: "16 Cores, 32 Threads, Up to 5.7 GHz" },
-            { id: 15, name: "AMD Ryzen 9 7900X3D", category: "CPU", price: 449, powerDraw: 120, image: IMAGES.amdCPU, specs: "12 Cores, 24 Threads, 140MB Cache, Up to 5.6 GHz" },
-            { id: 16, name: "AMD Ryzen 9 7900X", category: "CPU", price: 399, powerDraw: 170, image: IMAGES.amdCPU, specs: "12 Cores, 24 Threads, Up to 5.6 GHz" },
-            { id: 17, name: "AMD Ryzen 7 7800X3D", category: "CPU", price: 389, powerDraw: 120, image: IMAGES.amdCPU, specs: "8 Cores, 16 Threads, 3D V-Cache, Up to 5.0 GHz" },
-            { id: 18, name: "AMD Ryzen 7 7700X", category: "CPU", price: 299, powerDraw: 105, image: IMAGES.amdCPU, specs: "8 Cores, 16 Threads, Up to 5.4 GHz" },
-            { id: 19, name: "AMD Ryzen 5 7600X", category: "CPU", price: 225, powerDraw: 105, image: IMAGES.amdCPU, specs: "6 Cores, 12 Threads, Up to 5.3 GHz" },
-            { id: 20, name: "AMD Ryzen 5 7600", category: "CPU", price: 199, powerDraw: 65, image: IMAGES.amdCPU, specs: "6 Cores, 12 Threads, Up to 5.1 GHz" },
-            { id: 21, name: "AMD Ryzen 9 5950X", category: "CPU", price: 385, powerDraw: 105, image: IMAGES.amdCPU, specs: "16 Cores, 32 Threads, AM4, Up to 4.9 GHz" },
-            { id: 22, name: "AMD Ryzen 9 5900X", category: "CPU", price: 285, powerDraw: 105, image: IMAGES.amdCPU, specs: "12 Cores, 24 Threads, AM4, Up to 4.8 GHz" },
-            { id: 23, name: "AMD Ryzen 7 5800X3D", category: "CPU", price: 320, powerDraw: 105, image: IMAGES.amdCPU, specs: "8 Cores, 16 Threads, AM4, 96MB L3 Cache" },
-            { id: 24, name: "AMD Ryzen 7 5700X", category: "CPU", price: 170, powerDraw: 65, image: IMAGES.amdCPU, specs: "8 Cores, 16 Threads, AM4, Up to 4.6 GHz" },
-            { id: 25, name: "AMD Ryzen 5 5600X", category: "CPU", price: 145, powerDraw: 65, image: IMAGES.amdCPU, specs: "6 Cores, 12 Threads, AM4, Up to 4.6 GHz" },
+        // --- Mock Database (100 Items Total: 25 CPU, 25 GPU, 25 RAM, 25 Motherboard) ---
+        const partsDatabase = [
+            // --- 25 CPUs ---
+            { id: 1, name: "Intel Core i9-14900K", category: "CPU", price: 589, powerDraw: 253, specs: "24 Cores (8P+16E), 32 Threads, Up to 6.0 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-118-462-03.jpg" },
+            { id: 2, name: "Intel Core i7-14700K", category: "CPU", price: 399, powerDraw: 253, specs: "20 Cores (8P+12E), 28 Threads, Up to 5.6 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-118-466-04.jpg" },
+            { id: 3, name: "Intel Core i5-14600K", category: "CPU", price: 299, powerDraw: 181, specs: "14 Cores (6P+8E), 20 Threads, Up to 5.3 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-118-470-07.jpg" },
+            { id: 4, name: "Intel Core i9-13900K", category: "CPU", price: 549, powerDraw: 253, specs: "24 Cores, 32 Threads, Up to 5.8 GHz", image: "https://c1.neweggimages.com/ProductImageCompressAll1280/19-118-412-V01.jpg" },
+            { id: 5, name: "Intel Core i7-13700K", category: "CPU", price: 365, powerDraw: 253, specs: "16 Cores, 24 Threads, Up to 5.4 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-118-414-V01.jpg" },
+            { id: 6, name: "Intel Core i5-13600K", category: "CPU", price: 285, powerDraw: 181, specs: "14 Cores, 20 Threads, Up to 5.1 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-118-416-V01.jpg" },
+            { id: 7, name: "Intel Core i5-13400F", category: "CPU", price: 185, powerDraw: 65, specs: "10 Cores, 16 Threads, Up to 4.6 GHz", image: "https://c1.neweggimages.com/ProductImageCompressAll1280/19-118-431-04.jpg" },
+            { id: 8, name: "Intel Core i3-13100F", category: "CPU", price: 110, powerDraw: 58, specs: "4 Cores, 8 Threads, Up to 4.5 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-118-433-02.png" },
+            { id: 9, name: "Intel Core i9-12900K", category: "CPU", price: 345, powerDraw: 241, specs: "16 Cores, 24 Threads, Up to 5.2 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-118-339-08.jpg" },
+            { id: 10, name: "Intel Core i7-12700K", category: "CPU", price: 235, powerDraw: 190, specs: "12 Cores, 20 Threads, Up to 5.0 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-118-345-05.jpg" },
+            { id: 11, name: "Intel Core i5-12600K", category: "CPU", price: 175, powerDraw: 150, specs: "10 Cores, 16 Threads, Up to 4.9 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-118-347-06.jpg" },
+            { id: 12, name: "Intel Core i5-12400F", category: "CPU", price: 135, powerDraw: 65, specs: "6 Cores, 12 Threads, Up to 4.4 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-118-360-08.jpg" },
+            { id: 13, name: "AMD Ryzen 9 7950X3D", category: "CPU", price: 649, powerDraw: 120, specs: "16 Cores, 32 Threads, 144MB Cache, Up to 5.7 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-113-791-03.png" },
+            { id: 14, name: "AMD Ryzen 9 7950X", category: "CPU", price: 549, powerDraw: 170, specs: "16 Cores, 32 Threads, Up to 5.7 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-113-771-09.jpg" },
+            { id: 15, name: "AMD Ryzen 9 7900X3D", category: "CPU", price: 449, powerDraw: 120, specs: "12 Cores, 24 Threads, 140MB Cache, Up to 5.6 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-113-792-03.png" },
+            { id: 16, name: "AMD Ryzen 9 7900X", category: "CPU", price: 399, powerDraw: 170, specs: "12 Cores, 24 Threads, Up to 5.6 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-113-769-02.jpg" },
+            { id: 17, name: "AMD Ryzen 7 7800X3D", category: "CPU", price: 389, powerDraw: 120, specs: "8 Cores, 16 Threads, 3D V-Cache, Up to 5.0 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-113-793-03.png" },
+            { id: 18, name: "AMD Ryzen 7 7700X", category: "CPU", price: 299, powerDraw: 105, specs: "8 Cores, 16 Threads, Up to 5.4 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-113-768-01.jpg" },
+            { id: 19, name: "AMD Ryzen 5 7600X", category: "CPU", price: 225, powerDraw: 105, specs: "6 Cores, 12 Threads, Up to 5.3 GHz", image: "https://c1.neweggimages.com/ProductImageCompressAll1280/19-113-770-02.jpg" },
+            { id: 20, name: "AMD Ryzen 5 7600", category: "CPU", price: 199, powerDraw: 65, specs: "6 Cores, 12 Threads, Up to 5.1 GHz", image: "https://c1.neweggimages.com/ProductImageCompressAll1280/19-113-787-03.jpg" },
+            { id: 21, name: "AMD Ryzen 9 5950X", category: "CPU", price: 385, powerDraw: 105, specs: "16 Cores, 32 Threads, AM4, Up to 4.9 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-113-663-V01.jpg" },
+            { id: 22, name: "AMD Ryzen 9 5900X", category: "CPU", price: 285, powerDraw: 105, specs: "12 Cores, 24 Threads, AM4, Up to 4.8 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-113-664-V01.jpg" },
+            { id: 23, name: "AMD Ryzen 7 5800X3D", category: "CPU", price: 320, powerDraw: 105, specs: "8 Cores, 16 Threads, AM4, 96MB L3 Cache", image: "https://c1.neweggimages.com/productimage/nb1280/19-113-940-05.jpg" },
+            { id: 24, name: "AMD Ryzen 7 5700X", category: "CPU", price: 170, powerDraw: 65, specs: "8 Cores, 16 Threads, AM4, Up to 4.6 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-113-735-V01.jpg" },
+            { id: 25, name: "AMD Ryzen 5 5600X", category: "CPU", price: 145, powerDraw: 65, specs: "6 Cores, 12 Threads, AM4, Up to 4.6 GHz", image: "https://c1.neweggimages.com/productimage/nb1280/19-113-666-V01.jpg" },
 
-            // --- GPUs ---
-            { id: 26, name: "NVIDIA GeForce RTX 4090", category: "GPU", price: 1699, powerDraw: 450, image: IMAGES.nvidiaGPU, specs: "24GB GDDR6X, 16384 CUDA Cores, DLSS 3" },
-            { id: 27, name: "NVIDIA GeForce RTX 4080 Super", category: "GPU", price: 999, powerDraw: 320, image: IMAGES.nvidiaGPU, specs: "16GB GDDR6X, 10240 CUDA Cores" },
-            { id: 28, name: "NVIDIA GeForce RTX 4080", category: "GPU", price: 1100, powerDraw: 320, image: IMAGES.nvidiaGPU, specs: "16GB GDDR6X, 9728 CUDA Cores" },
-            { id: 29, name: "NVIDIA GeForce RTX 4070 Ti Super", category: "GPU", price: 799, powerDraw: 285, image: IMAGES.nvidiaGPU, specs: "16GB GDDR6X, 8448 CUDA Cores" },
-            { id: 30, name: "NVIDIA GeForce RTX 4070 Ti", category: "GPU", price: 749, powerDraw: 285, image: IMAGES.nvidiaGPU, specs: "12GB GDDR6X, 7680 CUDA Cores" },
-            { id: 31, name: "NVIDIA GeForce RTX 4070 Super", category: "GPU", price: 599, powerDraw: 220, image: IMAGES.nvidiaGPU, specs: "12GB GDDR6X, 7168 CUDA Cores" },
-            { id: 32, name: "NVIDIA GeForce RTX 4070", category: "GPU", price: 549, powerDraw: 200, image: IMAGES.nvidiaGPU, specs: "12GB GDDR6X, 5888 CUDA Cores" },
-            { id: 33, name: "NVIDIA GeForce RTX 4060 Ti 16GB", category: "GPU", price: 449, powerDraw: 165, image: IMAGES.nvidiaGPU, specs: "16GB GDDR6, 4352 CUDA Cores" },
-            { id: 34, name: "NVIDIA GeForce RTX 4060 Ti 8GB", category: "GPU", price: 389, powerDraw: 160, image: IMAGES.nvidiaGPU, specs: "8GB GDDR6, 4352 CUDA Cores" },
-            { id: 35, name: "NVIDIA GeForce RTX 4060", category: "GPU", price: 299, powerDraw: 115, image: IMAGES.nvidiaGPU, specs: "8GB GDDR6, 3072 CUDA Cores" },
-            { id: 36, name: "NVIDIA GeForce RTX 3090 Ti", category: "GPU", price: 1200, powerDraw: 450, image: IMAGES.nvidiaGPU, specs: "24GB GDDR6X, 10752 CUDA Cores" },
-            { id: 37, name: "NVIDIA GeForce RTX 3080 Ti", category: "GPU", price: 800, powerDraw: 350, image: IMAGES.nvidiaGPU, specs: "12GB GDDR6X, 10240 CUDA Cores" },
-            { id: 38, name: "NVIDIA GeForce RTX 3080 10GB", category: "GPU", price: 600, powerDraw: 320, image: IMAGES.nvidiaGPU, specs: "10GB GDDR6X, 8704 CUDA Cores" },
-            { id: 39, name: "NVIDIA GeForce RTX 3070", category: "GPU", price: 400, powerDraw: 220, image: IMAGES.nvidiaGPU, specs: "8GB GDDR6, 5888 CUDA Cores" },
-            { id: 40, name: "NVIDIA GeForce RTX 3060 Ti", category: "GPU", price: 330, powerDraw: 200, image: IMAGES.nvidiaGPU, specs: "8GB GDDR6, 4864 CUDA Cores" },
-            { id: 41, name: "AMD Radeon RX 7900 XTX", category: "GPU", price: 950, powerDraw: 355, image: IMAGES.amdGPU, specs: "24GB GDDR6, 6144 Stream Processors" },
-            { id: 42, name: "AMD Radeon RX 7900 XT", category: "GPU", price: 730, powerDraw: 315, image: IMAGES.amdGPU, specs: "20GB GDDR6, 5376 Stream Processors" },
-            { id: 43, name: "AMD Radeon RX 7900 GRE", category: "GPU", price: 549, powerDraw: 260, image: IMAGES.amdGPU, specs: "16GB GDDR6, 5120 Stream Processors" },
-            { id: 44, name: "AMD Radeon RX 7800 XT", category: "GPU", price: 499, powerDraw: 263, image: IMAGES.amdGPU, specs: "16GB GDDR6, 3840 Stream Processors" },
-            { id: 45, name: "AMD Radeon RX 7700 XT", category: "GPU", price: 419, powerDraw: 245, image: IMAGES.amdGPU, specs: "12GB GDDR6, 3456 Stream Processors" },
-            { id: 46, name: "AMD Radeon RX 7600 XT", category: "GPU", price: 329, powerDraw: 190, image: IMAGES.amdGPU, specs: "16GB GDDR6, 2048 Stream Processors" },
-            { id: 47, name: "AMD Radeon RX 7600", category: "GPU", price: 269, powerDraw: 165, image: IMAGES.amdGPU, specs: "8GB GDDR6, 2048 Stream Processors" },
-            { id: 48, name: "AMD Radeon RX 6950 XT", category: "GPU", price: 600, powerDraw: 335, image: IMAGES.amdGPU, specs: "16GB GDDR6, 5120 Stream Processors" },
-            { id: 49, name: "AMD Radeon RX 6700 XT", category: "GPU", price: 320, powerDraw: 230, image: IMAGES.amdGPU, specs: "12GB GDDR6, 2560 Stream Processors" },
-            { id: 50, name: "Intel Arc A770", category: "GPU", price: 280, powerDraw: 225, image: IMAGES.nvidiaGPU, specs: "16GB GDDR6, 32 Xe Cores" },
+            // --- 25 GPUs ---
+            { id: 26, name: "NVIDIA GeForce RTX 4090", category: "GPU", price: 1699, powerDraw: 450, specs: "24GB GDDR6X, 16384 CUDA Cores, DLSS 3" },
+            { id: 27, name: "NVIDIA GeForce RTX 4080 Super", category: "GPU", price: 999, powerDraw: 320, specs: "16GB GDDR6X, 10240 CUDA Cores" },
+            { id: 28, name: "NVIDIA GeForce RTX 4080", category: "GPU", price: 1100, powerDraw: 320, specs: "16GB GDDR6X, 9728 CUDA Cores" },
+            { id: 29, name: "NVIDIA GeForce RTX 4070 Ti Super", category: "GPU", price: 799, powerDraw: 285, specs: "16GB GDDR6X, 8448 CUDA Cores" },
+            { id: 30, name: "NVIDIA GeForce RTX 4070 Ti", category: "GPU", price: 749, powerDraw: 285, specs: "12GB GDDR6X, 7680 CUDA Cores" },
+            { id: 31, name: "NVIDIA GeForce RTX 4070 Super", category: "GPU", price: 599, powerDraw: 220, specs: "12GB GDDR6X, 7168 CUDA Cores" },
+            { id: 32, name: "NVIDIA GeForce RTX 4070", category: "GPU", price: 549, powerDraw: 200, specs: "12GB GDDR6X, 5888 CUDA Cores" },
+            { id: 33, name: "NVIDIA GeForce RTX 4060 Ti 16GB", category: "GPU", price: 449, powerDraw: 165, specs: "16GB GDDR6, 4352 CUDA Cores" },
+            { id: 34, name: "NVIDIA GeForce RTX 4060 Ti 8GB", category: "GPU", price: 389, powerDraw: 160, specs: "8GB GDDR6, 4352 CUDA Cores" },
+            { id: 35, name: "NVIDIA GeForce RTX 4060", category: "GPU", price: 299, powerDraw: 115, specs: "8GB GDDR6, 3072 CUDA Cores" },
+            { id: 36, name: "NVIDIA GeForce RTX 3090 Ti", category: "GPU", price: 1200, powerDraw: 450, specs: "24GB GDDR6X, 10752 CUDA Cores" },
+            { id: 37, name: "NVIDIA GeForce RTX 3080 Ti", category: "GPU", price: 800, powerDraw: 350, specs: "12GB GDDR6X, 10240 CUDA Cores" },
+            { id: 38, name: "NVIDIA GeForce RTX 3080 10GB", category: "GPU", price: 600, powerDraw: 320, specs: "10GB GDDR6X, 8704 CUDA Cores" },
+            { id: 39, name: "NVIDIA GeForce RTX 3070", category: "GPU", price: 400, powerDraw: 220, specs: "8GB GDDR6, 5888 CUDA Cores" },
+            { id: 40, name: "NVIDIA GeForce RTX 3060 Ti", category: "GPU", price: 330, powerDraw: 200, specs: "8GB GDDR6, 4864 CUDA Cores" },
+            { id: 41, name: "AMD Radeon RX 7900 XTX", category: "GPU", price: 950, powerDraw: 355, specs: "24GB GDDR6, 6144 Stream Processors" },
+            { id: 42, name: "AMD Radeon RX 7900 XT", category: "GPU", price: 730, powerDraw: 315, specs: "20GB GDDR6, 5376 Stream Processors" },
+            { id: 43, name: "AMD Radeon RX 7900 GRE", category: "GPU", price: 549, powerDraw: 260, specs: "16GB GDDR6, 5120 Stream Processors" },
+            { id: 44, name: "AMD Radeon RX 7800 XT", category: "GPU", price: 499, powerDraw: 263, specs: "16GB GDDR6, 3840 Stream Processors" },
+            { id: 45, name: "AMD Radeon RX 7700 XT", category: "GPU", price: 419, powerDraw: 245, specs: "12GB GDDR6, 3456 Stream Processors" },
+            { id: 46, name: "AMD Radeon RX 7600 XT", category: "GPU", price: 329, powerDraw: 190, specs: "16GB GDDR6, 2048 Stream Processors" },
+            { id: 47, name: "AMD Radeon RX 7600", category: "GPU", price: 269, powerDraw: 165, specs: "8GB GDDR6, 2048 Stream Processors" },
+            { id: 48, name: "AMD Radeon RX 6950 XT", category: "GPU", price: 600, powerDraw: 335, specs: "16GB GDDR6, 5120 Stream Processors" },
+            { id: 49, name: "AMD Radeon RX 6700 XT", category: "GPU", price: 320, powerDraw: 230, specs: "12GB GDDR6, 2560 Stream Processors" },
+            { id: 50, name: "Intel Arc A770", category: "GPU", price: 280, powerDraw: 225, specs: "16GB GDDR6, 32 Xe Cores" },
 
-            // --- RAM ---
-            { id: 51, name: "Corsair Vengeance RGB 32GB", category: "RAM", price: 115, powerDraw: 8, image: IMAGES.corsairRAM, specs: "DDR5-6000MHz, CL30" },
-            { id: 52, name: "Corsair Vengeance 64GB", category: "RAM", price: 210, powerDraw: 10, image: IMAGES.corsairRAM, specs: "DDR5-6400MHz, CL32" },
-            { id: 53, name: "Corsair Dominator Titanium 32GB", category: "RAM", price: 175, powerDraw: 9, image: IMAGES.corsairRAM, specs: "DDR5-7200MHz, CL34" },
-            { id: 54, name: "Corsair Vengeance LPX 32GB", category: "RAM", price: 65, powerDraw: 6, image: IMAGES.corsairRAM, specs: "DDR4-3600MHz, CL18" },
-            { id: 55, name: "Corsair Vengeance RGB Pro 16GB", category: "RAM", price: 50, powerDraw: 5, image: IMAGES.corsairRAM, specs: "DDR4-3200MHz, CL16" },
-            { id: 56, name: "G.Skill Trident Z5 Neo RGB 32GB", category: "RAM", price: 120, powerDraw: 8, image: IMAGES.gskillRAM, specs: "DDR5-6000MHz, CL30, AMD EXPO" },
-            { id: 57, name: "G.Skill Trident Z5 RGB 64GB", category: "RAM", price: 225, powerDraw: 10, image: IMAGES.gskillRAM, specs: "DDR5-6400MHz, CL32, Intel XMP" },
-            { id: 58, name: "G.Skill Flare X5 32GB", category: "RAM", price: 105, powerDraw: 7, image: IMAGES.gskillRAM, specs: "DDR5-6000MHz, CL36" },
-            { id: 59, name: "G.Skill Ripjaws S5 32GB", category: "RAM", price: 95, powerDraw: 7, image: IMAGES.gskillRAM, specs: "DDR5-5600MHz, CL28" },
-            { id: 60, name: "G.Skill Ripjaws V 32GB", category: "RAM", price: 60, powerDraw: 6, image: IMAGES.gskillRAM, specs: "DDR4-3600MHz, CL16" },
-            { id: 61, name: "TeamGroup T-Force Delta 32GB", category: "RAM", price: 110, powerDraw: 8, image: IMAGES.genericRAM, specs: "DDR5-6000MHz, CL30" },
-            { id: 62, name: "TeamGroup T-Force Delta 64GB", category: "RAM", price: 195, powerDraw: 10, image: IMAGES.genericRAM, specs: "DDR5-6000MHz, CL38" },
-            { id: 63, name: "TeamGroup T-Create Expert 32GB", category: "RAM", price: 95, powerDraw: 7, image: IMAGES.genericRAM, specs: "DDR5-6400MHz, CL32" },
-            { id: 64, name: "TeamGroup T-Force Vulcan Z 32GB", category: "RAM", price: 55, powerDraw: 5, image: IMAGES.genericRAM, specs: "DDR4-3200MHz, CL16" },
-            { id: 65, name: "TeamGroup XTREEM 48GB (2x24GB)", category: "RAM", price: 260, powerDraw: 11, image: IMAGES.genericRAM, specs: "DDR5-8200MHz, CL38" },
-            { id: 66, name: "Kingston FURY Beast RGB 32GB", category: "RAM", price: 125, powerDraw: 8, image: IMAGES.genericRAM, specs: "DDR5-6000MHz, CL36" },
-            { id: 67, name: "Kingston FURY Renegade 32GB", category: "RAM", price: 145, powerDraw: 9, image: IMAGES.genericRAM, specs: "DDR5-6400MHz, CL32" },
-            { id: 68, name: "Kingston FURY Beast 64GB", category: "RAM", price: 215, powerDraw: 10, image: IMAGES.genericRAM, specs: "DDR5-5600MHz, CL40" },
-            { id: 69, name: "Kingston FURY Beast 16GB", category: "RAM", price: 40, powerDraw: 4, image: IMAGES.genericRAM, specs: "DDR4-3200MHz, CL16" },
-            { id: 70, name: "Kingston FURY Impact 32GB", category: "RAM", price: 130, powerDraw: 5, image: IMAGES.genericRAM, specs: "DDR5-5600MHz, CL40, Laptop Memory" },
-            { id: 71, name: "Crucial Pro 32GB", category: "RAM", price: 85, powerDraw: 6, image: IMAGES.genericRAM, specs: "DDR5-5600MHz, CL46" },
-            { id: 72, name: "Crucial Pro 64GB", category: "RAM", price: 165, powerDraw: 8, image: IMAGES.genericRAM, specs: "DDR5-5600MHz, CL46" },
-            { id: 73, name: "Crucial Ballistix 32GB", category: "RAM", price: 75, powerDraw: 6, image: IMAGES.genericRAM, specs: "DDR4-3600MHz, CL16" },
-            { id: 74, name: "Patriot Viper Venom 32GB", category: "RAM", price: 90, powerDraw: 7, image: IMAGES.genericRAM, specs: "DDR5-6000MHz, CL36" },
-            { id: 75, name: "Silicon Power Value 32GB", category: "RAM", price: 85, powerDraw: 7, image: IMAGES.genericRAM, specs: "DDR5-6000MHz, CL30" },
+            // --- 25 RAM Kits ---
+            { id: 51, name: "Corsair Vengeance RGB 32GB (2x16GB)", category: "RAM", price: 115, powerDraw: 8, specs: "DDR5-6000MHz, CL30" },
+            { id: 52, name: "Corsair Vengeance 64GB (2x32GB)", category: "RAM", price: 210, powerDraw: 10, specs: "DDR5-6400MHz, CL32" },
+            { id: 53, name: "Corsair Dominator Titanium 32GB", category: "RAM", price: 175, powerDraw: 9, specs: "DDR5-7200MHz, CL34" },
+            { id: 54, name: "Corsair Vengeance LPX 32GB", category: "RAM", price: 65, powerDraw: 6, specs: "DDR4-3600MHz, CL18" },
+            { id: 55, name: "Corsair Vengeance RGB Pro 16GB", category: "RAM", price: 50, powerDraw: 5, specs: "DDR4-3200MHz, CL16" },
+            { id: 56, name: "G.Skill Trident Z5 Neo RGB 32GB", category: "RAM", price: 120, powerDraw: 8, specs: "DDR5-6000MHz, CL30, AMD EXPO" },
+            { id: 57, name: "G.Skill Trident Z5 RGB 64GB", category: "RAM", price: 225, powerDraw: 10, specs: "DDR5-6400MHz, CL32, Intel XMP" },
+            { id: 58, name: "G.Skill Flare X5 32GB", category: "RAM", price: 105, powerDraw: 7, specs: "DDR5-6000MHz, CL36" },
+            { id: 59, name: "G.Skill Ripjaws S5 32GB", category: "RAM", price: 95, powerDraw: 7, specs: "DDR5-5600MHz, CL28" },
+            { id: 60, name: "G.Skill Ripjaws V 32GB", category: "RAM", price: 60, powerDraw: 6, specs: "DDR4-3600MHz, CL16" },
+            { id: 61, name: "TeamGroup T-Force Delta RGB 32GB", category: "RAM", price: 110, powerDraw: 8, specs: "DDR5-6000MHz, CL30" },
+            { id: 62, name: "TeamGroup T-Force Delta RGB 64GB", category: "RAM", price: 195, powerDraw: 10, specs: "DDR5-6000MHz, CL38" },
+            { id: 63, name: "TeamGroup T-Create Expert 32GB", category: "RAM", price: 95, powerDraw: 7, specs: "DDR5-6400MHz, CL32" },
+            { id: 64, name: "TeamGroup T-Force Vulcan Z 32GB", category: "RAM", price: 55, powerDraw: 5, specs: "DDR4-3200MHz, CL16" },
+            { id: 65, name: "TeamGroup XTREEM 48GB (2x24GB)", category: "RAM", price: 260, powerDraw: 11, specs: "DDR5-8200MHz, CL38" },
+            { id: 66, name: "Kingston FURY Beast RGB 32GB", category: "RAM", price: 125, powerDraw: 8, specs: "DDR5-6000MHz, CL36" },
+            { id: 67, name: "Kingston FURY Renegade 32GB", category: "RAM", price: 145, powerDraw: 9, specs: "DDR5-6400MHz, CL32" },
+            { id: 68, name: "Kingston FURY Beast 64GB", category: "RAM", price: 215, powerDraw: 10, specs: "DDR5-5600MHz, CL40" },
+            { id: 69, name: "Kingston FURY Beast 16GB", category: "RAM", price: 40, powerDraw: 4, specs: "DDR4-3200MHz, CL16" },
+            { id: 70, name: "Kingston FURY Impact 32GB (SO-DIMM)", category: "RAM", price: 130, powerDraw: 5, specs: "DDR5-5600MHz, CL40, Laptop Memory" },
+            { id: 71, name: "Crucial Pro 32GB", category: "RAM", price: 85, powerDraw: 6, specs: "DDR5-5600MHz, CL46" },
+            { id: 72, name: "Crucial Pro 64GB", category: "RAM", price: 165, powerDraw: 8, specs: "DDR5-5600MHz, CL46" },
+            { id: 73, name: "Crucial Ballistix 32GB", category: "RAM", price: 75, powerDraw: 6, specs: "DDR4-3600MHz, CL16" },
+            { id: 74, name: "Patriot Viper Venom 32GB", category: "RAM", price: 90, powerDraw: 7, specs: "DDR5-6000MHz, CL36" },
+            { id: 75, name: "Silicon Power Value Gaming 32GB", category: "RAM", price: 85, powerDraw: 7, specs: "DDR5-6000MHz, CL30" },
 
-            // --- Motherboards ---
-            { id: 76, name: "ASUS ROG Maximus Z790 Hero", category: "Motherboard", price: 599, powerDraw: 45, image: IMAGES.asusMobo, specs: "LGA 1700, ATX, PCIe 5.0, WiFi 6E, DDR5" },
-            { id: 77, name: "ASUS ROG Strix Z790-E", category: "Motherboard", price: 450, powerDraw: 40, image: IMAGES.asusMobo, specs: "LGA 1700, ATX, PCIe 5.0, WiFi 6E, DDR5" },
-            { id: 78, name: "ASUS TUF Gaming Z790-Plus", category: "Motherboard", price: 230, powerDraw: 35, image: IMAGES.asusMobo, specs: "LGA 1700, ATX, PCIe 4.0, WiFi 6, DDR5" },
-            { id: 79, name: "ASUS ROG Strix B760-A", category: "Motherboard", price: 210, powerDraw: 30, image: IMAGES.asusMobo, specs: "LGA 1700, ATX, PCIe 5.0, WiFi 6E, DDR5" },
-            { id: 80, name: "ASUS Prime B760M-A", category: "Motherboard", price: 130, powerDraw: 25, image: IMAGES.asusMobo, specs: "LGA 1700, Micro-ATX, PCIe 4.0, DDR4" },
-            { id: 81, name: "ASUS ROG Crosshair X670E Hero", category: "Motherboard", price: 650, powerDraw: 50, image: IMAGES.asusMobo, specs: "AM5, ATX, PCIe 5.0, WiFi 6E, DDR5" },
-            { id: 82, name: "ASUS ROG Strix X670E-E", category: "Motherboard", price: 479, powerDraw: 45, image: IMAGES.asusMobo, specs: "AM5, ATX, PCIe 5.0, WiFi 6E, DDR5" },
-            { id: 83, name: "ASUS TUF Gaming X670E-Plus", category: "Motherboard", price: 280, powerDraw: 40, image: IMAGES.asusMobo, specs: "AM5, ATX, PCIe 5.0, WiFi 6E, DDR5" },
-            { id: 84, name: "ASUS ROG Strix B650E-F", category: "Motherboard", price: 260, powerDraw: 35, image: IMAGES.asusMobo, specs: "AM5, ATX, PCIe 5.0, WiFi 6E, DDR5" },
-            { id: 85, name: "ASUS TUF Gaming B650-PLUS", category: "Motherboard", price: 190, powerDraw: 30, image: IMAGES.asusMobo, specs: "AM5, ATX, PCIe 4.0, WiFi 6, DDR5" },
-            { id: 86, name: "MSI MEG Z790 GODLIKE", category: "Motherboard", price: 1199, powerDraw: 60, image: IMAGES.msiMobo, specs: "LGA 1700, E-ATX, PCIe 5.0, WiFi 6E, Touch Panel" },
-            { id: 87, name: "MSI MPG Z790 Carbon WiFi", category: "Motherboard", price: 399, powerDraw: 40, image: IMAGES.msiMobo, specs: "LGA 1700, ATX, PCIe 5.0, WiFi 6E, DDR5" },
-            { id: 88, name: "MSI MAG Z790 Tomahawk", category: "Motherboard", price: 259, powerDraw: 35, image: IMAGES.msiMobo, specs: "LGA 1700, ATX, PCIe 5.0, WiFi 6E, DDR5" },
-            { id: 89, name: "MSI MAG B760 Tomahawk", category: "Motherboard", price: 189, powerDraw: 30, image: IMAGES.msiMobo, specs: "LGA 1700, ATX, PCIe 5.0, WiFi 6E, DDR4/DDR5" },
-            { id: 90, name: "MSI PRO B760M-P", category: "Motherboard", price: 110, powerDraw: 20, image: IMAGES.msiMobo, specs: "LGA 1700, Micro-ATX, DDR4" },
-            { id: 91, name: "MSI MEG X670E ACE", category: "Motherboard", price: 699, powerDraw: 50, image: IMAGES.msiMobo, specs: "AM5, E-ATX, PCIe 5.0, WiFi 6E, DDR5" },
-            { id: 92, name: "MSI MPG X670E Carbon WiFi", category: "Motherboard", price: 420, powerDraw: 45, image: IMAGES.msiMobo, specs: "AM5, ATX, PCIe 5.0, WiFi 6E, DDR5" },
-            { id: 93, name: "MSI MAG B650 Tomahawk", category: "Motherboard", price: 210, powerDraw: 35, image: IMAGES.msiMobo, specs: "AM5, ATX, PCIe 4.0, WiFi 6E, DDR5" },
-            { id: 94, name: "Gigabyte Z790 AORUS MASTER", category: "Motherboard", price: 450, powerDraw: 45, image: IMAGES.gigabyteMobo, specs: "LGA 1700, E-ATX, PCIe 5.0, 10GbE, WiFi 6E" },
-            { id: 95, name: "Gigabyte Z790 AORUS ELITE AX", category: "Motherboard", price: 240, powerDraw: 35, image: IMAGES.gigabyteMobo, specs: "LGA 1700, ATX, PCIe 5.0, WiFi 6E" },
-            { id: 96, name: "Gigabyte X670E AORUS MASTER", category: "Motherboard", price: 440, powerDraw: 45, image: IMAGES.gigabyteMobo, specs: "AM5, E-ATX, PCIe 5.0, WiFi 6E" },
-            { id: 97, name: "Gigabyte B650 AORUS ELITE AX", category: "Motherboard", price: 199, powerDraw: 30, image: IMAGES.gigabyteMobo, specs: "AM5, ATX, PCIe 4.0, WiFi 6E" },
-            { id: 98, name: "ASRock Z790 Taichi", category: "Motherboard", price: 479, powerDraw: 45, image: IMAGES.asusMobo, specs: "LGA 1700, E-ATX, PCIe 5.0, WiFi 6E, Thunderbolt 4" },
-            { id: 99, name: "ASRock Z790 Steel Legend", category: "Motherboard", price: 230, powerDraw: 35, image: IMAGES.asusMobo, specs: "LGA 1700, ATX, PCIe 5.0, WiFi 6E" },
-            { id: 100, name: "ASRock X670E Taichi", category: "Motherboard", price: 499, powerDraw: 50, image: IMAGES.asusMobo, specs: "AM5, E-ATX, PCIe 5.0, WiFi 6E, USB4" },
-
-            // --- PSUs ---
-            { id: 101, name: "Corsair RM850x (2021)", category: "PSU", price: 149, powerDraw: 850, image: IMAGES.corsairPSU, specs: "80+ Gold, Fully Modular, ATX" },
-            { id: 102, name: "Corsair RM1000x", category: "PSU", price: 189, powerDraw: 1000, image: IMAGES.corsairPSU, specs: "80+ Gold, Fully Modular, ATX" },
-            { id: 103, name: "Corsair RM750e", category: "PSU", price: 99, powerDraw: 750, image: IMAGES.corsairPSU, specs: "80+ Gold, Fully Modular, ATX 3.0 Compatible" },
-            { id: 104, name: "Corsair SF750", category: "PSU", price: 184, powerDraw: 750, image: IMAGES.corsairPSU, specs: "80+ Platinum, Fully Modular, SFX Form Factor" },
-            { id: 105, name: "Corsair AX1600i", category: "PSU", price: 609, powerDraw: 1600, image: IMAGES.corsairPSU, specs: "80+ Titanium, Fully Modular, Digital DSP" },
-            { id: 106, name: "EVGA SuperNOVA 850 G6", category: "PSU", price: 159, powerDraw: 850, image: IMAGES.evgaPSU, specs: "80+ Gold, Fully Modular, Compact 140mm" },
-            { id: 107, name: "EVGA SuperNOVA 1000 GT", category: "PSU", price: 169, powerDraw: 1000, image: IMAGES.evgaPSU, specs: "80+ Gold, Fully Modular, Auto Eco Mode" },
-            { id: 108, name: "EVGA SuperNOVA 750 P6", category: "PSU", price: 139, powerDraw: 750, image: IMAGES.evgaPSU, specs: "80+ Platinum, Fully Modular" },
-            { id: 109, name: "Seasonic FOCUS GX-850", category: "PSU", price: 139, powerDraw: 850, image: IMAGES.evgaPSU, specs: "80+ Gold, Fully Modular, 10 Year Warranty" },
-            { id: 110, name: "Seasonic PRIME TX-1000", category: "PSU", price: 319, powerDraw: 1000, image: IMAGES.evgaPSU, specs: "80+ Titanium, Fully Modular, Micro Tolerance Load" },
-            { id: 111, name: "Seasonic FOCUS GX-750", category: "PSU", price: 119, powerDraw: 750, image: IMAGES.evgaPSU, specs: "80+ Gold, Fully Modular" },
-            { id: 112, name: "Seasonic VERTEX GX-1200", category: "PSU", price: 289, powerDraw: 1200, image: IMAGES.evgaPSU, specs: "80+ Gold, Fully Modular, ATX 3.0 / PCIe 5.0" },
-            { id: 113, name: "be quiet! Dark Power 13 850W", category: "PSU", price: 249, powerDraw: 850, image: IMAGES.evgaPSU, specs: "80+ Titanium, Fully Modular, ATX 3.0" },
-            { id: 114, name: "be quiet! Straight Power 12 1000W", category: "PSU", price: 209, powerDraw: 1000, image: IMAGES.evgaPSU, specs: "80+ Platinum, Fully Modular, ATX 3.0" },
-            { id: 115, name: "be quiet! Pure Power 12 750W", category: "PSU", price: 119, powerDraw: 750, image: IMAGES.evgaPSU, specs: "80+ Gold, Fully Modular, ATX 3.0" },
-            { id: 116, name: "MSI MPG A850G PCIE5", category: "PSU", price: 149, powerDraw: 850, image: IMAGES.evgaPSU, specs: "80+ Gold, Fully Modular, ATX 3.0 Ready" },
-            { id: 117, name: "MSI MEG Ai1300P", category: "PSU", price: 359, powerDraw: 1300, image: IMAGES.evgaPSU, specs: "80+ Platinum, Fully Modular, ATX 3.0 Ready" },
-            { id: 118, name: "MSI MAG A650BN", category: "PSU", price: 65, powerDraw: 650, image: IMAGES.evgaPSU, specs: "80+ Bronze, Non-Modular" },
-            { id: 119, name: "Thermaltake Toughpower GF3", category: "PSU", price: 139, powerDraw: 850, image: IMAGES.evgaPSU, specs: "80+ Gold, Fully Modular, ATX 3.0" },
-            { id: 120, name: "Thermaltake Toughpower GF1", category: "PSU", price: 109, powerDraw: 750, image: IMAGES.evgaPSU, specs: "80+ Gold, Fully Modular" },
-            { id: 121, name: "Cooler Master MWE Gold V2", category: "PSU", price: 119, powerDraw: 850, image: IMAGES.evgaPSU, specs: "80+ Gold, Fully Modular" },
-            { id: 122, name: "Cooler Master V1100 SFX", category: "PSU", price: 279, powerDraw: 1100, image: IMAGES.evgaPSU, specs: "80+ Platinum, Fully Modular, SFX" },
-            { id: 123, name: "ASUS ROG Thor 1000W Plat II", category: "PSU", price: 359, powerDraw: 1000, image: IMAGES.evgaPSU, specs: "80+ Platinum, Fully Modular, OLED Display" },
-            { id: 124, name: "ASUS ROG Loki SFX-L 850W", category: "PSU", price: 219, powerDraw: 850, image: IMAGES.evgaPSU, specs: "80+ Platinum, Fully Modular, SFX-L, ATX 3.0" },
-            { id: 125, name: "FSP Hydro G Pro 1000W", category: "PSU", price: 159, powerDraw: 1000, image: IMAGES.evgaPSU, specs: "80+ Gold, Fully Modular, ATX 3.0" }
+            // --- 25 Motherboards ---
+            { id: 76, name: "ASUS ROG Maximus Z790 Hero", category: "Motherboard", price: 599, powerDraw: 45, specs: "LGA 1700, ATX, PCIe 5.0, WiFi 6E, DDR5" },
+            { id: 77, name: "ASUS ROG Strix Z790-E Gaming", category: "Motherboard", price: 450, powerDraw: 40, specs: "LGA 1700, ATX, PCIe 5.0, WiFi 6E, DDR5" },
+            { id: 78, name: "ASUS TUF Gaming Z790-Plus", category: "Motherboard", price: 230, powerDraw: 35, specs: "LGA 1700, ATX, PCIe 4.0, WiFi 6, DDR5" },
+            { id: 79, name: "ASUS ROG Strix B760-A Gaming", category: "Motherboard", price: 210, powerDraw: 30, specs: "LGA 1700, ATX, PCIe 5.0, WiFi 6E, DDR5" },
+            { id: 80, name: "ASUS Prime B760M-A", category: "Motherboard", price: 130, powerDraw: 25, specs: "LGA 1700, Micro-ATX, PCIe 4.0, DDR4" },
+            { id: 81, name: "ASUS ROG Crosshair X670E Hero", category: "Motherboard", price: 650, powerDraw: 50, specs: "AM5, ATX, PCIe 5.0, WiFi 6E, DDR5" },
+            { id: 82, name: "ASUS ROG Strix X670E-E", category: "Motherboard", price: 479, powerDraw: 45, specs: "AM5, ATX, PCIe 5.0, WiFi 6E, DDR5" },
+            { id: 83, name: "ASUS TUF Gaming X670E-Plus", category: "Motherboard", price: 280, powerDraw: 40, specs: "AM5, ATX, PCIe 5.0, WiFi 6E, DDR5" },
+            { id: 84, name: "ASUS ROG Strix B650E-F", category: "Motherboard", price: 260, powerDraw: 35, specs: "AM5, ATX, PCIe 5.0, WiFi 6E, DDR5" },
+            { id: 85, name: "ASUS TUF Gaming B650-PLUS", category: "Motherboard", price: 190, powerDraw: 30, specs: "AM5, ATX, PCIe 4.0, WiFi 6, DDR5" },
+            { id: 86, name: "MSI MEG Z790 GODLIKE", category: "Motherboard", price: 1199, powerDraw: 60, specs: "LGA 1700, E-ATX, PCIe 5.0, WiFi 6E, Touch Panel" },
+            { id: 87, name: "MSI MPG Z790 Carbon WiFi", category: "Motherboard", price: 399, powerDraw: 40, specs: "LGA 1700, ATX, PCIe 5.0, WiFi 6E, DDR5" },
+            { id: 88, name: "MSI MAG Z790 Tomahawk", category: "Motherboard", price: 259, powerDraw: 35, specs: "LGA 1700, ATX, PCIe 5.0, WiFi 6E, DDR5" },
+            { id: 89, name: "MSI MAG B760 Tomahawk", category: "Motherboard", price: 189, powerDraw: 30, specs: "LGA 1700, ATX, PCIe 5.0, WiFi 6E, DDR4/DDR5 options" },
+            { id: 90, name: "MSI PRO B760M-P", category: "Motherboard", price: 110, powerDraw: 20, specs: "LGA 1700, Micro-ATX, DDR4" },
+            { id: 91, name: "MSI MEG X670E ACE", category: "Motherboard", price: 699, powerDraw: 50, specs: "AM5, E-ATX, PCIe 5.0, WiFi 6E, DDR5" },
+            { id: 92, name: "MSI MPG X670E Carbon WiFi", category: "Motherboard", price: 420, powerDraw: 45, specs: "AM5, ATX, PCIe 5.0, WiFi 6E, DDR5" },
+            { id: 93, name: "MSI MAG B650 Tomahawk", category: "Motherboard", price: 210, powerDraw: 35, specs: "AM5, ATX, PCIe 4.0, WiFi 6E, DDR5" },
+            { id: 94, name: "Gigabyte Z790 AORUS MASTER", category: "Motherboard", price: 450, powerDraw: 45, specs: "LGA 1700, E-ATX, PCIe 5.0, 10GbE, WiFi 6E" },
+            { id: 95, name: "Gigabyte Z790 AORUS ELITE AX", category: "Motherboard", price: 240, powerDraw: 35, specs: "LGA 1700, ATX, PCIe 5.0, WiFi 6E" },
+            { id: 96, name: "Gigabyte X670E AORUS MASTER", category: "Motherboard", price: 440, powerDraw: 45, specs: "AM5, E-ATX, PCIe 5.0, WiFi 6E" },
+            { id: 97, name: "Gigabyte B650 AORUS ELITE AX", category: "Motherboard", price: 199, powerDraw: 30, specs: "AM5, ATX, PCIe 4.0, WiFi 6E" },
+            { id: 98, name: "ASRock Z790 Taichi", category: "Motherboard", price: 479, powerDraw: 45, specs: "LGA 1700, E-ATX, PCIe 5.0, WiFi 6E, Thunderbolt 4" },
+            { id: 99, name: "ASRock Z790 Steel Legend", category: "Motherboard", price: 230, powerDraw: 35, specs: "LGA 1700, ATX, PCIe 5.0, WiFi 6E" },
+            { id: 100, name: "ASRock X670E Taichi", category: "Motherboard", price: 499, powerDraw: 50, specs: "AM5, E-ATX, PCIe 5.0, WiFi 6E, USB4" }
         ];
-
-        // --- Data Enrichment: Automatically adds dimensions based on category ---
-        partsDatabase = partsDatabase.map(part => {
-            let dimensions = "Not specified";
-            let extendedDetails = {};
-
-            if (part.category === 'GPU') {
-                dimensions = "336mm (L) x 140mm (W) x 61mm (H) [3-slot]";
-                extendedDetails = { "Interface": "PCIe 4.0 x16", "Recommended PSU": "850W", "Ports": "3x DisplayPort 1.4a, 1x HDMI 2.1" };
-            } else if (part.category === 'CPU') {
-                dimensions = "37.5mm x 37.5mm";
-                extendedDetails = { "Socket": part.specs.includes('LGA') ? 'LGA 1700' : 'AM5 / AM4', "Integrated Graphics": "Yes / Varies", "Cooler Included": "No" };
-            } else if (part.category === 'Motherboard') {
-                const isATX = part.specs.includes('ATX') && !part.specs.includes('Micro');
-                dimensions = isATX ? "305mm x 244mm (ATX)" : "244mm x 244mm (Micro-ATX)";
-                extendedDetails = { "Form Factor": isATX ? "ATX" : "Micro-ATX", "M.2 Slots": "3x PCIe 4.0 NVMe", "Rear USB Ports": "8-10 ports" };
-            } else if (part.category === 'RAM') {
-                dimensions = "133.35mm x 34.1mm x 7.1mm";
-                extendedDetails = { "Modules": "2 Sticks", "Voltage": "1.35V - 1.4V", "Heat Spreader": "Aluminum" };
-            } else if (part.category === 'PSU') {
-                dimensions = part.specs.includes('SFX') ? "125mm x 100mm x 63.5mm" : "150mm x 160mm x 86mm";
-                extendedDetails = { "Form Factor": part.specs.includes('SFX') ? "SFX" : "ATX", "Fan Size": "135mm FDB Fan", "Cabling": "Fully Modular" };
-            }
-            return { ...part, dimensions, extendedDetails };
-        });
 
         // --- State ---
         let currentFilteredProducts = partsDatabase;
@@ -435,14 +566,10 @@
         const categoryCheckboxes = document.querySelectorAll('.category-filter');
         const floatingCompareBtn = document.getElementById('floatingCompareBtn');
         const compareModal = document.getElementById('compareModal');
-        const closeCompareBtn = document.getElementById('closeCompareBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
         const compareTableContainer = document.getElementById('compareTableContainer');
-        const detailsModal = document.getElementById('detailsModal');
-        const closeDetailsBtn = document.getElementById('closeDetailsBtn');
-        const detailsBody = document.getElementById('detailsBody');
-        const detailsTitle = document.getElementById('detailsTitle');
 
-        // --- Render Main Grid ---
+        // --- Core Functions ---
         function renderProducts(products) {
             grid.innerHTML = '';
             
@@ -454,76 +581,38 @@
             products.forEach(part => {
                 const isCompared = comparisonList.includes(part.id);
                 const btnClass = isCompared ? 'btn selected' : 'btn';
-                const btnText = isCompared ? '✓ Added to Compare' : '+ Add to Compare';
-                
-                const isPSU = part.category === 'PSU';
-                const powerLabel = isPSU ? `⚡ ${part.powerDraw}W Max Capacity` : `⚡ ${part.powerDraw}W Power Draw`;
-                const powerClass = isPSU ? 'power-draw psu' : 'power-draw';
+                const btnText = isCompared ? '✓ Added to Compare' : 'Add to Compare';
+
+                // Check for image, else show placeholder
+                const imageElement = part.image 
+                    ? `<img src="${part.image}" alt="${part.name}" class="product-image">`
+                    : `<div class="no-image">No Image Available</div>`;
 
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.onclick = () => openDetailsModal(part.id);
-
                 card.innerHTML = `
-                    <img src="${part.image}" alt="${part.name}" class="card-img" loading="lazy">
+                    ${imageElement}
                     <span class="category-badge">${part.category}</span>
-                    <h3>${part.name}</h3>
+                    <h3 style="margin-top: 0.5rem; margin-bottom: 0.2rem;">${part.name}</h3>
                     <div class="price">$${part.price}</div>
                     <div class="specs">
-                        <strong>Brief Specs:</strong>
+                        <strong>Specifications:</strong><br>
                         ${part.specs}<br>
-                        <span class="${powerClass}">${powerLabel}</span>
+                        <span class="power-draw">⚡ ${part.powerDraw}W Power Draw</span>
                     </div>
-                    <button class="${btnClass}" onclick="event.stopPropagation(); toggleCompare(${part.id})" aria-label="${isCompared ? 'Remove from comparison' : 'Add to comparison'}">${btnText}</button>
+                    <button class="${btnClass}" onclick="toggleCompare(${part.id})">${btnText}</button>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        // --- Product Details Modal Logic ---
-        function openDetailsModal(id) {
-            const part = partsDatabase.find(p => p.id === id);
-            if (!part) return;
-
-            detailsTitle.textContent = part.name;
-            
-            let detailsListHtml = '';
-            for (const [key, value] of Object.entries(part.extendedDetails)) {
-                detailsListHtml += `<li><strong>${key}:</strong> <span>${value}</span></li>`;
-            }
-
-            detailsBody.innerHTML = `
-                <img src="${part.image}" alt="${part.name}" class="details-image">
-                <div class="details-info">
-                    <span class="category-badge">${part.category}</span>
-                    <div class="price" style="margin: 0;">$${part.price}</div>
-                    
-                    <h3>Technical Specifications</h3>
-                    <ul class="details-specs-list">
-                        <li><strong>Base Specs:</strong> <span>${part.specs}</span></li>
-                        <li><strong>Power ${part.category === 'PSU' ? 'Capacity' : 'Draw'}:</strong> <span>${part.powerDraw}W</span></li>
-                        ${detailsListHtml}
-                        <li><strong>Dimensions:</strong> <span>${part.dimensions}</span></li>
-                    </ul>
-                </div>
-            `;
-
-            detailsModal.style.display = 'flex';
-            closeDetailsBtn.focus();
-        }
-
-        function closeDetails() {
-            detailsModal.style.display = 'none';
-        }
-
-        // --- Comparison Logic ---
         function toggleCompare(id) {
             const index = comparisonList.indexOf(id);
             if (index > -1) {
                 comparisonList.splice(index, 1); 
             } else {
                 if (comparisonList.length >= 4) {
-                    alert("You can only compare up to 4 items side-by-side cleanly.");
+                    alert("You can only compare up to 4 items side-by-side.");
                     return;
                 }
                 comparisonList.push(id); 
@@ -534,7 +623,7 @@
             
             if (compareModal.style.display === 'flex') {
                 renderComparisonTable();
-                if(comparisonList.length === 0) closeCompareModal();
+                if(comparisonList.length === 0) closeModal();
             }
         }
 
@@ -554,49 +643,63 @@
             }
 
             const itemsToCompare = comparisonList.map(id => partsDatabase.find(p => p.id === id));
+
             let html = '<table class="compare-table">';
             
-            html += '<tr><th>Image</th>';
-            itemsToCompare.forEach(item => { html += `<td><img src="${item.image}" alt="${item.name}" class="table-img"></td>`; });
-            html += '</tr><tr><td>Model</td>';
-            itemsToCompare.forEach(item => { html += `<td><strong>${item.name}</strong></td>`; });
-            html += '</tr><tr><td>Category</td>';
-            itemsToCompare.forEach(item => { html += `<td><span class="category-badge">${item.category}</span></td>`; });
-            html += '</tr><tr><td>Price</td>';
-            itemsToCompare.forEach(item => { html += `<td class="price" style="margin:0;">$${item.price}</td>`; });
-            html += '</tr><tr><td>Power / Capacity</td>';
+            html += '<tr><th>Feature</th>';
             itemsToCompare.forEach(item => { 
-                const label = item.category === 'PSU' ? '(Max Capacity)' : '(Power Draw)';
-                html += `<td><strong>${item.powerDraw}W</strong> <br><span style="font-size:0.85em; color:var(--text-light)">${label}</span></td>`; 
+                const imgHtml = item.image ? `<img src="${item.image}" class="compare-table-img" alt="${item.name}">` : '';
+                html += `<th>${item.name} ${imgHtml}</th>`; 
             });
-            html += '</tr><tr><td>Base Specs</td>';
+            html += '</tr>';
+
+            html += '<tr><td>Category</td>';
+            itemsToCompare.forEach(item => { html += `<td><span class="category-badge">${item.category}</span></td>`; });
+            html += '</tr>';
+
+            html += '<tr><td>Price</td>';
+            itemsToCompare.forEach(item => { html += `<td class="price">$${item.price}</td>`; });
+            html += '</tr>';
+
+            html += '<tr><td>Power Draw</td>';
+            itemsToCompare.forEach(item => { html += `<td><strong>${item.powerDraw}W</strong></td>`; });
+            html += '</tr>';
+
+            html += '<tr><td>Specifications</td>';
             itemsToCompare.forEach(item => { html += `<td>${item.specs}</td>`; });
-            html += '</tr><tr><td>Dimensions</td>';
-            itemsToCompare.forEach(item => { html += `<td>${item.dimensions}</td>`; });
-            html += '</tr><tr><td>Action</td>';
-            itemsToCompare.forEach(item => { html += `<td><button class="btn btn-remove" onclick="toggleCompare(${item.id})">Remove Item</button></td>`; });
-            html += '</tr></table>';
+            html += '</tr>';
+
+            html += '<tr><td></td>';
+            itemsToCompare.forEach(item => { html += `<td><button class="btn btn-remove" onclick="toggleCompare(${item.id})">Remove</button></td>`; });
+            html += '</tr>';
+
+            html += '</table>';
             compareTableContainer.innerHTML = html;
         }
 
-        function openCompareModal() {
+        function openModal() {
             renderComparisonTable();
             compareModal.style.display = 'flex';
-            closeCompareBtn.focus();
         }
 
-        function closeCompareModal() { compareModal.style.display = 'none'; }
+        function closeModal() {
+            compareModal.style.display = 'none';
+        }
 
-        // --- Filter Logic ---
         function filterProducts() {
             const searchTerm = searchInput.value.toLowerCase();
             const maxPrice = parseInt(priceRange.value);
-            const activeCategories = Array.from(categoryCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+            
+            const activeCategories = Array.from(categoryCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
 
             currentFilteredProducts = partsDatabase.filter(part => {
-                const matchesSearch = part.name.toLowerCase().includes(searchTerm) || part.specs.toLowerCase().includes(searchTerm);
+                const matchesSearch = part.name.toLowerCase().includes(searchTerm) || 
+                                      part.specs.toLowerCase().includes(searchTerm);
                 const matchesPrice = part.price <= maxPrice;
                 const matchesCategory = activeCategories.length === 0 || activeCategories.includes(part.category);
+
                 return matchesSearch && matchesPrice && matchesCategory;
             });
 
@@ -605,26 +708,22 @@
 
         // --- Event Listeners ---
         searchInput.addEventListener('input', filterProducts);
-        priceRange.addEventListener('input', (e) => { priceValue.textContent = e.target.value; filterProducts(); });
         
-        categoryCheckboxes.forEach(cb => {
-            cb.addEventListener('change', filterProducts);
-            cb.addEventListener('keydown', (e) => { if(e.key === 'Enter') { cb.checked = !cb.checked; filterProducts(); }});
+        priceRange.addEventListener('input', (e) => {
+            priceValue.textContent = e.target.value;
+            filterProducts();
         });
 
-        floatingCompareBtn.addEventListener('click', openCompareModal);
-        closeCompareBtn.addEventListener('click', closeCompareModal);
-        closeDetailsBtn.addEventListener('click', closeDetails);
-        
-        window.addEventListener('click', (e) => {
-            if (e.target === compareModal) closeCompareModal();
-            if (e.target === detailsModal) closeDetails();
+        categoryCheckboxes.forEach(cb => {
+            cb.addEventListener('change', filterProducts);
         });
+
+        floatingCompareBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
         
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                if (compareModal.style.display === 'flex') closeCompareModal();
-                if (detailsModal.style.display === 'flex') closeDetails();
+        compareModal.addEventListener('click', (e) => {
+            if (e.target === compareModal) {
+                closeModal();
             }
         });
 
