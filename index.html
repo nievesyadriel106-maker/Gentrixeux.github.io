@@ -84,49 +84,17 @@
 
         /* --- Dropdown Filter Menu Styles --- */
         .filter-menu-details summary {
-            font-size: 1.15rem;
-            font-weight: bold;
-            cursor: pointer;
-            padding: 0.85rem 1rem;
-            background-color: var(--bg);
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            list-style: none; /* Hides default arrow */
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            user-select: none;
-            transition: all 0.2s;
+            font-size: 1.15rem; font-weight: bold; cursor: pointer; padding: 0.85rem 1rem;
+            background-color: var(--bg); border: 2px solid var(--border); border-radius: 8px;
+            list-style: none; display: flex; justify-content: space-between; align-items: center;
+            user-select: none; transition: all 0.2s;
         }
-
-        .filter-menu-details summary::-webkit-details-marker {
-            display: none; /* Hides arrow in Safari/Chrome */
-        }
-
-        .filter-menu-details summary:hover {
-            border-color: var(--primary);
-        }
-
-        .filter-menu-details summary::after {
-            content: '▼';
-            font-size: 0.8rem;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .filter-menu-details[open] summary::after {
-            transform: rotate(180deg);
-        }
-
-        .filter-menu-details[open] summary {
-            margin-bottom: 1.5rem;
-            background-color: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .filter-menu-content {
-            animation: fadeIn 0.3s ease-in-out;
-        }
+        .filter-menu-details summary::-webkit-details-marker { display: none; }
+        .filter-menu-details summary:hover { border-color: var(--primary); }
+        .filter-menu-details summary::after { content: '▼'; font-size: 0.8rem; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .filter-menu-details[open] summary::after { transform: rotate(180deg); }
+        .filter-menu-details[open] summary { margin-bottom: 1.5rem; background-color: var(--primary); color: white; border-color: var(--primary); }
+        .filter-menu-content { animation: fadeIn 0.3s ease-in-out; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
@@ -134,32 +102,54 @@
         }
 
         .filter-group { margin-bottom: 2rem; }
-        .filter-group h3 { 
-            margin-top: 0; font-size: 1.2rem; margin-bottom: 1rem; 
-            border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; 
-            display: flex; align-items: center; gap: 0.5rem;
-        }
+        .filter-group h3 { margin-top: 0; font-size: 1.2rem; margin-bottom: 1rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
         .filter-label { display: flex; align-items: center; margin-bottom: 0.75rem; cursor: pointer; font-size: 1.05rem; }
         .filter-label input[type="checkbox"] { width: 1.25rem; height: 1.25rem; margin-right: 0.75rem; cursor: pointer; }
-        
         input[type="range"] { width: 100%; height: 8px; border-radius: 4px; cursor: pointer; }
         
         .price-input {
-            width: 80px;
-            padding: 0.35rem 0.5rem;
-            border: 2px solid var(--border);
-            border-radius: 6px;
-            background-color: var(--bg);
-            color: var(--text);
-            font-size: 1.1rem;
-            font-weight: bold;
-            font-family: inherit;
-            transition: border-color 0.2s;
+            width: 80px; padding: 0.35rem 0.5rem; border: 2px solid var(--border); border-radius: 6px;
+            background-color: var(--bg); color: var(--text); font-size: 1.1rem; font-weight: bold;
+            font-family: inherit; transition: border-color 0.2s;
         }
         .price-input:focus { outline: none; border-color: var(--primary); }
 
         .main-content { flex: 1; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+
+        /* --- Category Sections (New Layout) --- */
+        .category-section {
+            margin-bottom: 2rem;
+            background: var(--surface);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px var(--shadow);
+            overflow: hidden;
+        }
+        .category-section summary {
+            font-size: 1.3rem;
+            font-weight: 800;
+            padding: 1.25rem 1.5rem;
+            background: var(--surface);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+            list-style: none;
+        }
+        .category-section summary::-webkit-details-marker { display: none; }
+        .category-section summary:hover { background: var(--bg); }
+        .category-section[open] summary { border-bottom: 1px solid var(--border); }
+        .category-section summary::after { content: '▼'; font-size: 0.9rem; transition: transform 0.3s; }
+        .category-section[open] summary::after { transform: rotate(180deg); }
+        
+        .category-content {
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            background: var(--bg);
+        }
 
         .card {
             background: var(--surface); border: 1px solid var(--border);
@@ -174,7 +164,7 @@
             margin-bottom: 1rem; background-color: #ffffff; border: 1px solid var(--border); padding: 0.5rem; box-sizing: border-box;
         }
         
-        .category-badge { background: var(--primary); color: white; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; margin-bottom: 0.75rem; width: fit-content; }
+        .category-badge { background: var(--primary); color: white; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; margin-bottom: 0.75rem; width: fit-content; display: none; /* Hidden since they are grouped now */ }
         .card h3 { font-size: 1.25rem; margin: 0.25rem 0; }
         .price { font-size: 1.75rem; font-weight: 800; color: var(--text); margin: 1rem 0; }
         .specs { color: var(--text-light); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem; flex-grow: 1; }
@@ -229,7 +219,7 @@
             .sidebar { width: 100%; position: relative; top: 0; display: flex; flex-direction: column; gap: 1rem; padding: 1rem; }
             .header-controls { flex-direction: column-reverse; width: 100%; align-items: stretch; }
             .search-container { max-width: 100%; }
-            .grid { grid-template-columns: 1fr; }
+            .category-content { grid-template-columns: 1fr; }
             .floating-btn { bottom: 1rem; right: 1rem; left: 1rem; width: calc(100% - 2rem); text-align: center; border-radius: 12px; }
             .table-responsive { padding: 1rem; }
             .details-body { flex-direction: column; }
@@ -251,7 +241,6 @@
 
     <div class="layout">
         <aside class="sidebar">
-            
             <!-- Filter Drop-down Menu -->
             <details class="filter-menu-details" id="filterMenu" open>
                 <summary>⚙️ Filter Options</summary>
@@ -274,13 +263,10 @@
                     </div>
                 </div>
             </details>
-
         </aside>
 
-        <main class="main-content">
-            <div class="grid" id="productGrid">
-                <!-- Products will be generated here by JavaScript -->
-            </div>
+        <main class="main-content" id="productGrid">
+            <!-- Dropdowns will be generated here by JavaScript -->
         </main>
     </div>
 
@@ -311,18 +297,18 @@
     <script>
         // Static Reliable Image Links (Real Product Images)
         const IMAGES = {
-            intelCPU: "https://m.media-amazon.com/images/I/61NlMknXm7L._AC_SL1500_.jpg",
-            amdCPU: "https://m.media-amazon.com/images/I/616q1Q5Z71L._AC_SL1500_.jpg",
-            nvidiaGPU: "https://m.media-amazon.com/images/I/81X0F+OudtL._AC_SL1500_.jpg",
-            amdGPU: "https://m.media-amazon.com/images/I/81V+t1jFmVL._AC_SL1500_.jpg",
-            corsairRAM: "https://m.media-amazon.com/images/I/61oXm-WzU8L._AC_SL1500_.jpg",
-            gskillRAM: "https://m.media-amazon.com/images/I/61gG8P0qWCL._AC_SL1500_.jpg",
-            genericRAM: "https://m.media-amazon.com/images/I/619T-N-D69L._AC_SL1500_.jpg",
-            asusMobo: "https://m.media-amazon.com/images/I/81O+z8mS78L._AC_SL1500_.jpg",
-            msiMobo: "https://m.media-amazon.com/images/I/81c0HOfbIYL._AC_SL1500_.jpg",
-            gigabyteMobo: "https://m.media-amazon.com/images/I/817E1o5p1vL._AC_SL1500_.jpg",
-            corsairPSU: "https://m.media-amazon.com/images/I/61c1G9P9y9L._AC_SL1500_.jpg",
-            evgaPSU: "https://m.media-amazon.com/images/I/71zB6yXqQ1L._AC_SL1500_.jpg"
+            intelCPU: "https://c1.neweggimages.com/productimage/nb1280/19-118-462-03.jpg",
+            amdCPU: "https://c1.neweggimages.com/productimage/nb1280/19-113-791-03.png",
+            nvidiaGPU: "https://c1.neweggimages.com/productimage/nb1280/B1AHS221107073TMR4E.jpg",
+            amdGPU: "https://c1.neweggimages.com/productimage/nb1280/14-930-084-06.jpg",
+            corsairRAM: "https://c1.neweggimages.com/productimage/nb1280/20-982-277-04.jpg",
+            gskillRAM: "https://c1.neweggimages.com/productimage/nb1280/20-374-429-13.png",
+            genericRAM: "https://c1.neweggimages.com/productimage/nb1280/20-331-811-06.jpg",
+            asusMobo: "https://c1.neweggimages.com/productimage/nb1280/13-119-597-V01.jpg",
+            msiMobo: "https://c1.neweggimages.com/productimage/nb1280/13-144-561-14.jpg",
+            gigabyteMobo: "https://c1.neweggimages.com/ProductImageCompressAll1280/13-145-415-01.jpg",
+            corsairPSU: "https://c1.neweggimages.com/productimage/nb1280/17-139-333-04.png",
+            evgaPSU: "https://m.media-amazon.com/images/I/61966PqKcoS._AC_UF350,350_QL80_.jpg"
         };
 
         // --- Theme Toggle Logic ---
@@ -476,7 +462,7 @@
             { id: 125, name: "FSP Hydro G Pro 1000W", category: "PSU", price: 159, powerDraw: 1000, image: "https://www.fsplifestyle.com/upload/product/PIC22700000000010453.jpg", specs: "80+ Gold, Fully Modular, ATX 3.0" }
         ];
 
-        // --- Data Enrichment: Automatically adds dimensions based on category ---
+        // --- Data Enrichment ---
         partsDatabase = partsDatabase.map(part => {
             let dimensions = "Not specified";
             let extendedDetails = {};
@@ -520,7 +506,7 @@
         const detailsBody = document.getElementById('detailsBody');
         const detailsTitle = document.getElementById('detailsTitle');
 
-        // --- Render Main Grid ---
+        // --- Render Products separated into Category Dropdowns ---
         function renderProducts(products) {
             grid.innerHTML = '';
             
@@ -529,32 +515,64 @@
                 return;
             }
 
-            products.forEach(part => {
-                const isCompared = comparisonList.includes(part.id);
-                const btnClass = isCompared ? 'btn selected' : 'btn';
-                const btnText = isCompared ? '✓ Added to Compare' : '+ Add to Compare';
-                
-                const isPSU = part.category === 'PSU';
-                const powerLabel = isPSU ? `⚡ ${part.powerDraw}W Max Capacity` : `⚡ ${part.powerDraw}W Power Draw`;
-                const powerClass = isPSU ? 'power-draw psu' : 'power-draw';
+            const categories = ['CPU', 'GPU', 'RAM', 'Motherboard', 'PSU'];
+            const categoryLabels = {
+                'CPU': '🖥️ Processors (CPU)',
+                'GPU': '🎮 Graphics Cards (GPU)',
+                'RAM': '🖴 Memory (RAM)',
+                'Motherboard': '🎛️ Motherboards',
+                'PSU': '⚡ Power Supplies (PSU)'
+            };
 
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.onclick = () => openDetailsModal(part.id);
+            categories.forEach(cat => {
+                const catProducts = products.filter(p => p.category === cat);
+                if (catProducts.length === 0) return; // Skip if no products match this category
 
-                card.innerHTML = `
-                    <img src="${part.image}" alt="${part.name}" class="card-img" loading="lazy">
-                    <span class="category-badge">${part.category}</span>
-                    <h3>${part.name}</h3>
-                    <div class="price">$${part.price}</div>
-                    <div class="specs">
-                        <strong>Brief Specs:</strong>
-                        ${part.specs}<br>
-                        <span class="${powerClass}">${powerLabel}</span>
-                    </div>
-                    <button class="${btnClass}" onclick="event.stopPropagation(); toggleCompare(${part.id})" aria-label="${isCompared ? 'Remove from comparison' : 'Add to comparison'}">${btnText}</button>
-                `;
-                grid.appendChild(card);
+                // Create the accordion wrapper
+                const section = document.createElement('details');
+                section.className = 'category-section';
+                section.open = true; // Have them start opened
+
+                // Create the clickable header
+                const summary = document.createElement('summary');
+                summary.innerHTML = `<span>${categoryLabels[cat]} <span style="font-size:1rem; color:var(--text-light); font-weight:normal;">(${catProducts.length} items)</span></span>`;
+
+                // Create the grid for the cards
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'category-content';
+
+                // Build each card and add it to the category grid
+                catProducts.forEach(part => {
+                    const isCompared = comparisonList.includes(part.id);
+                    const btnClass = isCompared ? 'btn selected' : 'btn';
+                    const btnText = isCompared ? '✓ Added to Compare' : '+ Add to Compare';
+                    
+                    const isPSU = part.category === 'PSU';
+                    const powerLabel = isPSU ? `⚡ ${part.powerDraw}W Max Capacity` : `⚡ ${part.powerDraw}W Power Draw`;
+                    const powerClass = isPSU ? 'power-draw psu' : 'power-draw';
+
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.onclick = () => openDetailsModal(part.id);
+
+                    card.innerHTML = `
+                        <img src="${part.image}" alt="${part.name}" class="card-img" loading="lazy">
+                        <span class="category-badge">${part.category}</span>
+                        <h3>${part.name}</h3>
+                        <div class="price">$${part.price}</div>
+                        <div class="specs">
+                            <strong>Brief Specs:</strong>
+                            ${part.specs}<br>
+                            <span class="${powerClass}">${powerLabel}</span>
+                        </div>
+                        <button class="${btnClass}" onclick="event.stopPropagation(); toggleCompare(${part.id})" aria-label="${isCompared ? 'Remove from comparison' : 'Add to comparison'}">${btnText}</button>
+                    `;
+                    contentDiv.appendChild(card);
+                });
+
+                section.appendChild(summary);
+                section.appendChild(contentDiv);
+                grid.appendChild(section);
             });
         }
 
@@ -573,7 +591,7 @@
             detailsBody.innerHTML = `
                 <img src="${part.image}" alt="${part.name}" class="details-image">
                 <div class="details-info">
-                    <span class="category-badge">${part.category}</span>
+                    <span class="category-badge" style="display:inline-block;">${part.category}</span>
                     <div class="price" style="margin: 0;">$${part.price}</div>
                     
                     <h3>Technical Specifications</h3>
@@ -639,7 +657,7 @@
             html += '</tr><tr><td>Model</td>';
             itemsToCompare.forEach(item => { html += `<td><strong>${item.name}</strong></td>`; });
             html += '</tr><tr><td>Category</td>';
-            itemsToCompare.forEach(item => { html += `<td><span class="category-badge">${item.category}</span></td>`; });
+            itemsToCompare.forEach(item => { html += `<td><span class="category-badge" style="display:inline-block;">${item.category}</span></td>`; });
             html += '</tr><tr><td>Price</td>';
             itemsToCompare.forEach(item => { html += `<td class="price" style="margin:0;">$${item.price}</td>`; });
             html += '</tr><tr><td>Power / Capacity</td>';
@@ -729,4 +747,3 @@
     </script>
 </body>
 </html>
-
