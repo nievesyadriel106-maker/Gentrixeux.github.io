@@ -12,7 +12,7 @@
             --success: #059669; 
             --success-hover: #047857;
             --danger: #dc2626; 
-            --warning-bg: #fef08a; /* Yellow banner */
+            --warning-bg: #fef08a;
             --warning-text: #854d0e;
             --warning-border: #fde047;
             --bg: #f8fafc;
@@ -31,7 +31,7 @@
             --success: #10b981;
             --success-hover: #34d399;
             --danger: #ef4444;
-            --warning-bg: #713f12; /* Dark yellow/brown banner */
+            --warning-bg: #713f12; 
             --warning-text: #fef08a;
             --warning-border: #854d0e;
             --bg: #0f172a;      
@@ -177,9 +177,9 @@
         .specs strong { color: var(--text); display: block; margin-bottom: 0.25rem; }
 
         .power-draw { display: inline-block; background-color: var(--bg); border: 1px solid var(--border); padding: 0.35rem 0.75rem; border-radius: 6px; font-weight: bold; margin-top: 0.75rem; color: var(--danger); font-size: 0.95rem; }
-        .power-draw.psu { color: var(--success); }
+        .power-draw.psu, .power-draw.case { color: var(--success); }
         body.dark-mode .power-draw { color: #fca5a5; }
-        body.dark-mode .power-draw.psu { color: #6ee7b7; }
+        body.dark-mode .power-draw.psu, body.dark-mode .power-draw.case { color: #6ee7b7; }
 
         .btn { display: block; width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1.05rem; font-weight: bold; text-align: center; transition: background-color 0.2s, transform 0.1s; margin-top: 1rem; }
         .btn:hover { background: var(--primary-hover); }
@@ -256,7 +256,7 @@
 </head>
 <body>
 
-    <!-- Warning Banner Added Here -->
+    <!-- Warning Banner -->
     <div class="warning-banner">
         ⚠️ <strong>Note:</strong> The prices listed below are estimated launch prices, not real-time current market prices.
     </div>
@@ -265,7 +265,7 @@
         <h2>💻 PC Part Compare</h2>
         <div class="header-controls">
             <div class="search-container">
-                <input type="text" id="searchInput" aria-label="Search components" placeholder="Search for CPUs, GPUs, RAM...">
+                <input type="text" id="searchInput" aria-label="Search components" placeholder="Search for components...">
             </div>
             <div class="header-buttons">
                 <button id="viewToggleBtn" class="theme-toggle" aria-label="Toggle PC and Phone View">📱 Phone Mode</button>
@@ -287,13 +287,15 @@
                         <label class="filter-label"><input type="checkbox" class="category-filter" value="RAM"> Memory (RAM)</label>
                         <label class="filter-label"><input type="checkbox" class="category-filter" value="Motherboard"> Motherboards</label>
                         <label class="filter-label"><input type="checkbox" class="category-filter" value="PSU"> Power Supply (PSU)</label>
+                        <label class="filter-label"><input type="checkbox" class="category-filter" value="Cooler"> CPU Coolers</label>
+                        <label class="filter-label"><input type="checkbox" class="category-filter" value="Case"> PC Cases</label>
                     </div>
 
                     <div class="filter-group">
                         <h3>Max Price: $
-                            <input type="number" id="priceInput" class="price-input" min="50" max="3000" value="2500" aria-label="Type maximum price">
+                            <input type="number" id="priceInput" class="price-input" min="20" max="3000" value="2500" aria-label="Type maximum price">
                         </h3>
-                        <input type="range" id="priceRange" min="50" max="3000" value="2500" aria-label="Adjust maximum price slider">
+                        <input type="range" id="priceRange" min="20" max="3000" value="2500" aria-label="Adjust maximum price slider">
                     </div>
                 </div>
             </details>
@@ -374,7 +376,7 @@
             }
         });
 
-        // --- Mock Database ---
+        // --- Mock Database with 145 Items ---
         let partsDatabase = [
             // --- CPUs ---
             { id: 1, name: "Intel Core i9-14900K", category: "CPU", price: 589, powerDraw: 253, image: "https://c1.neweggimages.com/productimage/nb1280/19-118-462-03.jpg", specs: "24 Cores (8P+16E), 32 Threads, Up to 6.0 GHz" },
@@ -430,7 +432,7 @@
             { id: 49, name: "AMD Radeon RX 6700 XT", category: "GPU", price: 320, powerDraw: 230, image: "https://c1.neweggimages.com/productimage/nb1280/APBUS2208170KMSJ8C7.jpg", specs: "12GB GDDR6, 2560 Stream Processors" },
             { id: 50, name: "Intel Arc A770", category: "GPU", price: 280, powerDraw: 225, image: "https://c1.neweggimages.com/ProductImageCompressAll1280/BM9SS2604020IUKMI27.jpg", specs: "16GB GDDR6, 32 Xe Cores" },
 
-            // --- RAM (No 64GB options) ---
+            // --- RAM ---
             { id: 51, name: "Corsair Vengeance RGB 32GB", category: "RAM", price: 115, powerDraw: 8, image: "https://c1.neweggimages.com/productimage/nb1280/20-982-277-04.jpg", specs: "DDR5-6000MHz, CL30" },
             { id: 53, name: "Corsair Dominator Titanium 32GB", category: "RAM", price: 175, powerDraw: 9, image: "https://c1.neweggimages.com/productimage/nb1280/20-982-102-14.png", specs: "DDR5-7200MHz, CL34" },
             { id: 54, name: "Corsair Vengeance LPX 32GB", category: "RAM", price: 65, powerDraw: 6, image: "https://c1.neweggimages.com/productimage/nb1280/20-236-737-01.jpg", specs: "DDR4-3600MHz, CL18" },
@@ -504,7 +506,31 @@
             { id: 122, name: "Cooler Master V1100 SFX", category: "PSU", price: 279, powerDraw: 1100, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSISP09HZaf7N5U0blg2SD8j94GEQtuSuGRzEwJFMoJedxazGEvWBcXp9CJ&s=10", specs: "80+ Platinum, Fully Modular, SFX" },
             { id: 123, name: "ASUS ROG Thor 1000W Plat II", category: "PSU", price: 359, powerDraw: 1000, image: "https://m.media-amazon.com/images/I/81g2lMkfDnL.jpg", specs: "80+ Platinum, Fully Modular, OLED Display" },
             { id: 124, name: "ASUS ROG Loki SFX-L 850W", category: "PSU", price: 219, powerDraw: 850, image: "https://c1.neweggimages.com/productimage/nb1280/AWKTS230131JLSEn.jpg", specs: "80+ Platinum, Fully Modular, SFX-L, ATX 3.0" },
-            { id: 125, name: "FSP Hydro G Pro 1000W", category: "PSU", price: 159, powerDraw: 1000, image: "https://www.fsplifestyle.com/upload/product/PIC22700000000010453.jpg", specs: "80+ Gold, Fully Modular, ATX 3.0" }
+            { id: 125, name: "FSP Hydro G Pro 1000W", category: "PSU", price: 159, powerDraw: 1000, image: "https://www.fsplifestyle.com/upload/product/PIC22700000000010453.jpg", specs: "80+ Gold, Fully Modular, ATX 3.0" },
+
+            // --- PC Cases ---
+            { id: 126, name: "NZXT H5 Flow", category: "Case", price: 94, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "ATX Mid Tower, Tempered Glass, High Airflow" },
+            { id: 127, name: "Corsair 4000D Airflow", category: "Case", price: 104, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "ATX Mid Tower, Tempered Glass, High Airflow" },
+            { id: 128, name: "Lian Li O11 Dynamic EVO", category: "Case", price: 169, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "ATX Mid Tower, Dual Chamber, Tempered Glass" },
+            { id: 129, name: "Fractal Design North", category: "Case", price: 139, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "ATX Mid Tower, Real Wood Front Panel" },
+            { id: 130, name: "Hyte Y60", category: "Case", price: 199, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "ATX Mid Tower, Panoramic Glass, Vertical GPU" },
+            { id: 131, name: "Lian Li LANCOOL 216", category: "Case", price: 99, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "ATX Mid Tower, 2x 160mm PWM Fans" },
+            { id: 132, name: "Montech AIR 903 MAX", category: "Case", price: 75, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "E-ATX Mid Tower, 4x 140mm Fans Included" },
+            { id: 133, name: "Fractal Design Torrent", category: "Case", price: 189, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "E-ATX High Airflow, 2x 180mm Fans" },
+            { id: 134, name: "Phanteks NV5", category: "Case", price: 99, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "ATX Mid Tower, Seamless Glass Showcase" },
+            { id: 135, name: "Cooler Master Q300L", category: "Case", price: 44, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "Micro-ATX Mini Tower, Magnetic Dust Filters" },
+
+            // --- CPU Coolers ---
+            { id: 136, name: "Thermalright Peerless Assassin 120 SE", category: "Cooler", price: 35, powerDraw: 5, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "Dual Tower Air Cooler, 6 Heat Pipes" },
+            { id: 137, name: "Noctua NH-D15", category: "Cooler", price: 109, powerDraw: 5, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "Premium Dual Tower Air Cooler, 2x 140mm Fans" },
+            { id: 138, name: "ARCTIC Liquid Freezer III 360", category: "Cooler", price: 115, powerDraw: 15, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "360mm AIO Liquid Cooler, VRM Fan" },
+            { id: 139, name: "NZXT Kraken Elite 360 RGB", category: "Cooler", price: 279, powerDraw: 15, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "360mm AIO Liquid Cooler, LCD Display" },
+            { id: 140, name: "Corsair iCUE LINK H150i RGB", category: "Cooler", price: 239, powerDraw: 15, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "360mm AIO Liquid Cooler, Daisy-chain Tech" },
+            { id: 141, name: "DeepCool AK620", category: "Cooler", price: 65, powerDraw: 5, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "Dual Tower Air Cooler, 260W TDP" },
+            { id: 142, name: "Thermalright Phantom Spirit 120 SE", category: "Cooler", price: 38, powerDraw: 5, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "Dual Tower Air Cooler, 7 Heat Pipes" },
+            { id: 143, name: "Lian Li Galahad II Trinity 360", category: "Cooler", price: 169, powerDraw: 15, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "360mm AIO Liquid Cooler, High Performance" },
+            { id: 144, name: "be quiet! Dark Rock Pro 4", category: "Cooler", price: 89, powerDraw: 5, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "Dual Tower Air Cooler, Silent Wings Fans" },
+            { id: 145, name: "Cooler Master Hyper 212 Black", category: "Cooler", price: 29, powerDraw: 5, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "Single Tower Air Cooler, 4 Heat Pipes" }
         ];
 
         // --- Data Enrichment ---
@@ -528,6 +554,12 @@
             } else if (part.category === 'PSU') {
                 dimensions = part.specs.includes('SFX') ? "125mm x 100mm x 63.5mm" : "150mm x 160mm x 86mm";
                 extendedDetails = { "Form Factor": part.specs.includes('SFX') ? "SFX" : "ATX", "Fan Size": "135mm FDB Fan", "Cabling": "Fully Modular" };
+            } else if (part.category === 'Case') {
+                dimensions = "460mm x 225mm x 490mm (Avg)";
+                extendedDetails = { "Form Factor": "ATX Mid Tower", "Included Fans": "2x 120mm", "Front Panel": "Mesh / Glass" };
+            } else if (part.category === 'Cooler') {
+                dimensions = part.name.includes('360') ? "397mm x 120mm x 27mm" : "125mm x 135mm x 155mm";
+                extendedDetails = { "Type": part.name.includes('360') ? "AIO Liquid Cooler" : "Air Cooler", "Socket Support": "LGA 1700 / AM5", "Noise Level": "29.5 dBA" };
             }
             return { ...part, dimensions, extendedDetails };
         });
@@ -560,13 +592,15 @@
                 return;
             }
 
-            const categories = ['CPU', 'GPU', 'RAM', 'Motherboard', 'PSU'];
+            const categories = ['CPU', 'GPU', 'RAM', 'Motherboard', 'PSU', 'Cooler', 'Case'];
             const categoryLabels = {
                 'CPU': '🖥️ Processors (CPU)',
                 'GPU': '🎮 Graphics Cards (GPU)',
                 'RAM': '🖴 Memory (RAM)',
                 'Motherboard': '🎛️ Motherboards',
-                'PSU': '⚡ Power Supplies (PSU)'
+                'PSU': '⚡ Power Supplies (PSU)',
+                'Cooler': '❄️ CPU Coolers',
+                'Case': '🗄️ PC Cases'
             };
 
             categories.forEach(cat => {
@@ -590,7 +624,7 @@
                     
                     const isPSU = part.category === 'PSU';
                     const powerLabel = isPSU ? `⚡ ${part.powerDraw}W Max Capacity` : `⚡ ${part.powerDraw}W Power Draw`;
-                    const powerClass = isPSU ? 'power-draw psu' : 'power-draw';
+                    const powerClass = (isPSU || part.category === 'Case') ? 'power-draw psu' : 'power-draw';
 
                     const card = document.createElement('div');
                     card.className = 'card';
