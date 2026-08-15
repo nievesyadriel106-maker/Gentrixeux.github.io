@@ -226,6 +226,12 @@
         .compat-error h3 { margin-top: 0; color: var(--danger); }
         .compat-error ul { margin-bottom: 0; }
         .compat-error li { margin-bottom: 0.5rem; }
+        
+        /* New Warning Styles */
+        .compat-warning { background-color: var(--warning-bg); color: var(--warning-text); border: 2px solid var(--warning-border); padding: 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; }
+        .compat-warning h3 { margin-top: 0; color: var(--warning-text); }
+        .compat-warning ul { margin-bottom: 0; }
+        .compat-warning li { margin-bottom: 0.5rem; }
 
         /* =========================================
            RESPONSIVE & VIEW TOGGLE STYLES
@@ -314,7 +320,7 @@
         </main>
     </div>
 
-    <!-- Re-named Floating Button -->
+    <!-- Floating Button -->
     <button id="floatingCompareBtn" class="floating-btn">PC Builder / Compare (0)</button>
 
     <!-- Comparison Modal -->
@@ -557,16 +563,23 @@
         partsDatabase = partsDatabase.map(part => {
             let dimensions = "Not specified";
             let extendedDetails = {};
-            let compat = { socket: null, ramType: null, formFactor: null, maxFormFactor: null };
+            let compat = { cpuGen: null, chipset: null, socket: null, ramType: null, formFactor: null, maxFormFactor: null, length: 0, height: 0, isAIO: false, maxGpuLength: 0, maxCoolerHeight: 0 };
 
             if (part.category === 'GPU') {
-                dimensions = "336mm (L) x 140mm (W) x 61mm (H) [3-slot]";
+                compat.length = part.name.includes('4090') ? 342 : 300; 
+                dimensions = `${compat.length}mm (L) x 140mm (W) x 61mm (H) [3-slot]`;
                 extendedDetails = { "Interface": "PCIe 4.0 x16", "Recommended PSU": "850W", "Ports": "3x DisplayPort 1.4a, 1x HDMI 2.1" };
             } 
             else if (part.category === 'CPU') {
                 dimensions = "37.5mm x 37.5mm";
                 extendedDetails = { "Socket": part.specs.includes('LGA') ? 'LGA 1700' : 'AM5 / AM4', "Integrated Graphics": "Yes / Varies", "Cooler Included": "No" };
                 
+                if (part.name.includes('-14')) compat.cpuGen = 'Intel 14th Gen';
+                else if (part.name.includes('-13')) compat.cpuGen = 'Intel 13th Gen';
+                else if (part.name.includes('-12')) compat.cpuGen = 'Intel 12th Gen';
+                else if (part.name.includes('Ryzen') && part.name.includes(' 7')) compat.cpuGen = 'AMD Ryzen 7000';
+                else if (part.name.includes('Ryzen') && part.name.includes(' 5')) compat.cpuGen = 'AMD Ryzen 5000';
+
                 if (part.name.includes('Intel')) {
                     compat.socket = 'LGA 1700';
                     compat.ramType = 'DDR5'; 
@@ -581,6 +594,10 @@
                 dimensions = isATX ? "305mm x 244mm (ATX)" : "244mm x 244mm (Micro-ATX)";
                 extendedDetails = { "Form Factor": isATX ? "ATX" : "Micro-ATX", "M.2 Slots": "3x PCIe 4.0 NVMe", "Rear USB Ports": "8-10 ports" };
                 
+                if (part.name.includes('Z790') || part.name.includes('B760')) compat.chipset = 'Intel 700 Series';
+                else if (part.name.includes('X670') || part.name.includes('B650')) compat.chipset = 'AMD 600 Series';
+                else if (part.name.includes('X570') || part.name.includes('B550')) compat.chipset = 'AMD 500 Series';
+
                 if (part.specs.includes('LGA 1700')) compat.socket = 'LGA 1700';
                 else if (part.specs.includes('AM5')) compat.socket = 'AM5';
                 else if (part.specs.includes('AM4')) compat.socket = 'AM4';
@@ -606,13 +623,18 @@
                 dimensions = "460mm x 225mm x 490mm (Avg)";
                 extendedDetails = { "Form Factor": "ATX Mid Tower", "Included Fans": "2x 120mm", "Front Panel": "Mesh / Glass" };
                 
+                compat.maxGpuLength = part.name.includes('Q300L') ? 320 : 380;
+                compat.maxCoolerHeight = part.name.includes('Q300L') ? 159 : 165;
+
                 if (part.specs.includes('E-ATX')) compat.maxFormFactor = 3;
                 else if (part.specs.includes('Micro-ATX')) compat.maxFormFactor = 1;
                 else compat.maxFormFactor = 2; // ATX Mid
             } 
             else if (part.category === 'Cooler') {
-                dimensions = part.name.includes('360') ? "397mm x 120mm x 27mm" : "125mm x 135mm x 155mm";
-                extendedDetails = { "Type": part.name.includes('360') ? "AIO Liquid Cooler" : "Air Cooler", "Socket Support": "LGA 1700 / AM5", "Noise Level": "29.5 dBA" };
+                compat.isAIO = part.name.includes('360');
+                compat.height = compat.isAIO ? 27 : 155; 
+                dimensions = compat.isAIO ? "397mm x 120mm x 27mm" : "125mm x 135mm x 155mm";
+                extendedDetails = { "Type": compat.isAIO ? "AIO Liquid Cooler" : "Air Cooler", "Socket Support": "LGA 1700 / AM5", "Noise Level": "29.5 dBA" };
             }
             else if (part.category === 'Storage') {
                 if (part.specs.includes('M.2')) {
@@ -630,7 +652,7 @@
             return { ...part, dimensions, extendedDetails, compat };
         });
 
-        // --- Compatibility Checker Engine ---
+        // --- Improved Compatibility Checker Engine ---
         function checkCompatibility(items) {
             let errors = [];
             let warnings = [];
@@ -640,6 +662,8 @@
             const ram = items.find(i => i.category === 'RAM');
             const pcase = items.find(i => i.category === 'Case');
             const psu = items.find(i => i.category === 'PSU');
+            const gpu = items.find(i => i.category === 'GPU');
+            const cooler = items.find(i => i.category === 'Cooler');
             
             let totalPower = 0;
             items.forEach(i => {
@@ -648,32 +672,58 @@
                 }
             });
 
+            // CPU & Motherboard Checks
             if (cpu && mobo) {
                 if (cpu.compat.socket !== mobo.compat.socket) {
-                    errors.push(`<strong>Socket Mismatch:</strong> ${cpu.name} uses ${cpu.compat.socket}, but the ${mobo.name} uses ${mobo.compat.socket}.`);
+                    errors.push(`<strong>Socket Mismatch:</strong> The ${cpu.name} uses the ${cpu.compat.socket} socket, but the ${mobo.name} has an ${mobo.compat.socket} socket. They will not physically fit together.`);
+                } else {
+                    // Out-of-the-box BIOS checks
+                    if (cpu.compat.cpuGen === 'Intel 14th Gen' && mobo.compat.chipset === 'Intel 700 Series') {
+                        warnings.push(`<strong>BIOS Update Likely Required:</strong> The ${mobo.name} may require a BIOS update to boot with the ${cpu.name} (14th Gen) out of the box. Ensure the board has a "BIOS Flashback" feature to update without an older CPU.`);
+                    }
+                    if (cpu.compat.cpuGen === 'Intel 13th Gen' && mobo.compat.chipset === 'Intel 600 Series') {
+                        warnings.push(`<strong>BIOS Update Required:</strong> The ${mobo.name} requires a BIOS update to work with 13th Gen CPUs out of the box.`);
+                    }
                 }
             }
 
+            // RAM Checks
             if (mobo && ram) {
                 if (mobo.compat.ramType !== 'DDR4/DDR5' && mobo.compat.ramType !== ram.compat.ramType) {
-                    errors.push(`<strong>RAM Mismatch:</strong> ${mobo.name} supports ${mobo.compat.ramType}, but the ${ram.name} is ${ram.compat.ramType}.`);
+                    errors.push(`<strong>RAM Mismatch:</strong> The ${mobo.name} supports ${mobo.compat.ramType} memory, but the ${ram.name} is a ${ram.compat.ramType} kit.`);
                 }
             }
 
-            if (mobo && pcase) {
-                if (mobo.compat.formFactor > pcase.compat.maxFormFactor) {
-                    let mType = mobo.compat.formFactor === 3 ? "E-ATX" : "ATX";
-                    let cType = pcase.compat.maxFormFactor === 2 ? "ATX" : "Micro-ATX";
-                    errors.push(`<strong>Size Mismatch:</strong> ${mobo.name} is an ${mType} board, but the ${pcase.name} only supports up to ${cType}.`);
+            // Case Clearance Checks
+            if (pcase) {
+                if (mobo) {
+                    if (mobo.compat.formFactor > pcase.compat.maxFormFactor) {
+                        let mType = mobo.compat.formFactor === 3 ? "E-ATX" : "ATX";
+                        let cType = pcase.compat.maxFormFactor === 2 ? "ATX" : "Micro-ATX";
+                        errors.push(`<strong>Motherboard Size Mismatch:</strong> The ${mobo.name} is an ${mType} board, but the ${pcase.name} only supports up to ${cType} size.`);
+                    }
+                }
+                
+                if (gpu) {
+                    if (gpu.compat.length > pcase.compat.maxGpuLength) {
+                        errors.push(`<strong>GPU Clearance Issue:</strong> The ${gpu.name} is ${gpu.compat.length}mm long, but the ${pcase.name} only supports GPUs up to ${pcase.compat.maxGpuLength}mm.`);
+                    }
+                }
+
+                if (cooler && !cooler.compat.isAIO) {
+                    if (cooler.compat.height > pcase.compat.maxCoolerHeight) {
+                        errors.push(`<strong>Cooler Clearance Issue:</strong> The ${cooler.name} is ${cooler.compat.height}mm tall, but the ${pcase.name} only supports CPU coolers up to ${pcase.compat.maxCoolerHeight}mm tall. The glass side panel will not close.`);
+                    }
                 }
             }
 
+            // Power Supply Checks
             if (psu) {
-                let estimatedTotal = totalPower + 100; 
+                let estimatedTotal = totalPower + 100; // Adding buffer for motherboard/fans
                 if (estimatedTotal > psu.powerDraw) {
-                    errors.push(`<strong>Insufficient Power:</strong> Your system draws an estimated ${estimatedTotal}W, but your PSU only provides ${psu.powerDraw}W.`);
+                    errors.push(`<strong>Insufficient Power:</strong> Your system draws an estimated ${estimatedTotal}W, but your PSU only provides ${psu.powerDraw}W. Your PC will shut down under load.`);
                 } else if (estimatedTotal > psu.powerDraw * 0.85) {
-                    warnings.push(`<strong>Low Power Headroom:</strong> Your system draws an estimated ${estimatedTotal}W. A ${psu.powerDraw}W PSU is cutting it close.`);
+                    warnings.push(`<strong>Low Power Headroom:</strong> Your system draws an estimated ${estimatedTotal}W. A ${psu.powerDraw}W PSU is cutting it close; consider upgrading for stability and future upgrades.`);
                 }
             } else if (totalPower > 0) {
                 warnings.push(`Estimated system power draw is ${totalPower + 100}W. Don't forget to add a sufficient Power Supply!`);
@@ -859,7 +909,13 @@
                         compatHtml += '</ul><br>';
                     }
                     if (issues.warnings.length > 0) {
-                        if(issues.errors.length === 0) compatHtml += '<h3>⚠️ Warnings</h3>';
+                        if(issues.errors.length > 0) {
+                            compatHtml += '</div><div class="compat-warning">';
+                        } else {
+                            // change class to warning if only warnings exist
+                            compatHtml = compatHtml.replace('compat-error', 'compat-warning');
+                        }
+                        compatHtml += '<h3>⚠️ Warnings & Notes</h3>';
                         compatHtml += '<ul>';
                         issues.warnings.forEach(w => compatHtml += `<li>⚠️ ${w}</li>`);
                         compatHtml += '</ul>';
