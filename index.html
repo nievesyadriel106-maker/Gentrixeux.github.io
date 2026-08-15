@@ -376,7 +376,7 @@
             }
         });
 
-        // --- Mock Database with 145 Items ---
+        // --- Mock Database with 145 Items and Accurate Images ---
         let partsDatabase = [
             // --- CPUs ---
             { id: 1, name: "Intel Core i9-14900K", category: "CPU", price: 589, powerDraw: 253, image: "https://c1.neweggimages.com/productimage/nb1280/19-118-462-03.jpg", specs: "24 Cores (8P+16E), 32 Threads, Up to 6.0 GHz" },
@@ -509,28 +509,28 @@
             { id: 125, name: "FSP Hydro G Pro 1000W", category: "PSU", price: 159, powerDraw: 1000, image: "https://www.fsplifestyle.com/upload/product/PIC22700000000010453.jpg", specs: "80+ Gold, Fully Modular, ATX 3.0" },
 
             // --- PC Cases ---
-            { id: 126, name: "NZXT H5 Flow", category: "Case", price: 94, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "ATX Mid Tower, Tempered Glass, High Airflow" },
-            { id: 127, name: "Corsair 4000D Airflow", category: "Case", price: 104, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "ATX Mid Tower, Tempered Glass, High Airflow" },
-            { id: 128, name: "Lian Li O11 Dynamic EVO", category: "Case", price: 169, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "ATX Mid Tower, Dual Chamber, Tempered Glass" },
-            { id: 129, name: "Fractal Design North", category: "Case", price: 139, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "ATX Mid Tower, Real Wood Front Panel" },
-            { id: 130, name: "Hyte Y60", category: "Case", price: 199, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "ATX Mid Tower, Panoramic Glass, Vertical GPU" },
-            { id: 131, name: "Lian Li LANCOOL 216", category: "Case", price: 99, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "ATX Mid Tower, 2x 160mm PWM Fans" },
-            { id: 132, name: "Montech AIR 903 MAX", category: "Case", price: 75, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "E-ATX Mid Tower, 4x 140mm Fans Included" },
-            { id: 133, name: "Fractal Design Torrent", category: "Case", price: 189, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "E-ATX High Airflow, 2x 180mm Fans" },
-            { id: 134, name: "Phanteks NV5", category: "Case", price: 99, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "ATX Mid Tower, Seamless Glass Showcase" },
-            { id: 135, name: "Cooler Master Q300L", category: "Case", price: 44, powerDraw: 0, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Case", specs: "Micro-ATX Mini Tower, Magnetic Dust Filters" },
+            { id: 126, name: "NZXT H5 Flow", category: "Case", price: 94, powerDraw: 0, image: "https://c1.neweggimages.com/productimage/nb1280/11-146-365-04.png", specs: "ATX Mid Tower, Tempered Glass, High Airflow" },
+            { id: 127, name: "Corsair 4000D Airflow", category: "Case", price: 104, powerDraw: 0, image: "https://c1.neweggimages.com/productimage/nb1280/11-139-258-01.png", specs: "ATX Mid Tower, Tempered Glass, High Airflow" },
+            { id: 128, name: "Lian Li O11 Dynamic EVO", category: "Case", price: 169, powerDraw: 0, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrIdyCFbhQbsmsaHv6yTSL-C23VaA-oaUxLdsqDroK6GfiHtC-T695h-A&s=10", specs: "ATX Mid Tower, Dual Chamber, Tempered Glass" },
+            { id: 129, name: "Fractal Design North", category: "Case", price: 139, powerDraw: 0, image: "https://c1.neweggimages.com/productimage/nb1280/11-352-204-21.jpg", specs: "ATX Mid Tower, Real Wood Front Panel" },
+            { id: 130, name: "Hyte Y60", category: "Case", price: 199, powerDraw: 0, image: "https://geekawhat.com/wp-content/uploads/2023/01/HYTE-Y60-Case-Feature-Image.jpg", specs: "ATX Mid Tower, Panoramic Glass, Vertical GPU" },
+            { id: 131, name: "Lian Li LANCOOL 216", category: "Case", price: 99, powerDraw: 0, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiP9-5VwHa4yeu9GqEEi38N-baMrb9qdIQdRC6HC7fPg&s=10", specs: "ATX Mid Tower, 2x 160mm PWM Fans" },
+            { id: 132, name: "Montech AIR 903 MAX", category: "Case", price: 75, powerDraw: 0, image: "https://m.media-amazon.com/images/I/9149yphbYwL.jpg", specs: "E-ATX Mid Tower, 4x 140mm Fans Included" },
+            { id: 133, name: "Fractal Design Torrent", category: "Case", price: 189, powerDraw: 0, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3zVRauxnJguKeBM02sExV7HwUqzPXg-7Rs6bvZPcjR3WfNlYO3NOwHio&s=10", specs: "E-ATX High Airflow, 2x 180mm Fans" },
+            { id: 134, name: "Phanteks NV5", category: "Case", price: 99, powerDraw: 0, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-4TALQe1XGSj7YoXvIRB7umIj3lrcX-D8vvNI8F1qGw&s=10", specs: "ATX Mid Tower, Seamless Glass Showcase" },
+            { id: 135, name: "Cooler Master Q300L", category: "Case", price: 44, powerDraw: 0, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTqXvDegTgMGSmz_tlxHJW1LpiXqse_konXwBqbDBZqdthQT13NDZbfV-M&s=10", specs: "Micro-ATX Mini Tower, Magnetic Dust Filters" },
 
             // --- CPU Coolers ---
-            { id: 136, name: "Thermalright Peerless Assassin 120 SE", category: "Cooler", price: 35, powerDraw: 5, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "Dual Tower Air Cooler, 6 Heat Pipes" },
-            { id: 137, name: "Noctua NH-D15", category: "Cooler", price: 109, powerDraw: 5, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "Premium Dual Tower Air Cooler, 2x 140mm Fans" },
-            { id: 138, name: "ARCTIC Liquid Freezer III 360", category: "Cooler", price: 115, powerDraw: 15, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "360mm AIO Liquid Cooler, VRM Fan" },
-            { id: 139, name: "NZXT Kraken Elite 360 RGB", category: "Cooler", price: 279, powerDraw: 15, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "360mm AIO Liquid Cooler, LCD Display" },
-            { id: 140, name: "Corsair iCUE LINK H150i RGB", category: "Cooler", price: 239, powerDraw: 15, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "360mm AIO Liquid Cooler, Daisy-chain Tech" },
-            { id: 141, name: "DeepCool AK620", category: "Cooler", price: 65, powerDraw: 5, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "Dual Tower Air Cooler, 260W TDP" },
-            { id: 142, name: "Thermalright Phantom Spirit 120 SE", category: "Cooler", price: 38, powerDraw: 5, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "Dual Tower Air Cooler, 7 Heat Pipes" },
-            { id: 143, name: "Lian Li Galahad II Trinity 360", category: "Cooler", price: 169, powerDraw: 15, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "360mm AIO Liquid Cooler, High Performance" },
-            { id: 144, name: "be quiet! Dark Rock Pro 4", category: "Cooler", price: 89, powerDraw: 5, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "Dual Tower Air Cooler, Silent Wings Fans" },
-            { id: 145, name: "Cooler Master Hyper 212 Black", category: "Cooler", price: 29, powerDraw: 5, image: "https://placehold.co/400x300/e2e8f0/0f172a?text=Cooler", specs: "Single Tower Air Cooler, 4 Heat Pipes" }
+            { id: 136, name: "Thermalright Peerless Assassin 120 SE", category: "Cooler", price: 35, powerDraw: 5, image: "https://c1.neweggimages.com/productimage/nb1280/BVHXS24052407KAKNB6.jpg", specs: "Dual Tower Air Cooler, 6 Heat Pipes" },
+            { id: 137, name: "Noctua NH-D15", category: "Cooler", price: 109, powerDraw: 5, image: "https://c1.neweggimages.com/productimage/nb1280/AADYS2407010J9FJXFA.jpg", specs: "Premium Dual Tower Air Cooler, 2x 140mm Fans" },
+            { id: 138, name: "ARCTIC Liquid Freezer III 360", category: "Cooler", price: 115, powerDraw: 15, image: "https://c1.neweggimages.com/productimage/nb1280/A2W0S25040807Y0SB4E.jpg", specs: "360mm AIO Liquid Cooler, VRM Fan" },
+            { id: 139, name: "NZXT Kraken Elite 360 RGB", category: "Cooler", price: 279, powerDraw: 15, image: "https://c1.neweggimages.com/productimage/nb1280/35-146-164-01.jpg", specs: "360mm AIO Liquid Cooler, LCD Display" },
+            { id: 140, name: "Corsair iCUE LINK H150i RGB", category: "Cooler", price: 239, powerDraw: 15, image: "https://m.media-amazon.com/images/I/61f66yUJ6QL.jpg", specs: "360mm AIO Liquid Cooler, Daisy-chain Tech" },
+            { id: 141, name: "DeepCool AK620", category: "Cooler", price: 65, powerDraw: 5, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSz8bKFUccUoOsBQ2W2lggs5fmHugG7Z3qyRYsbPNtKcg&s", specs: "Dual Tower Air Cooler, 260W TDP" },
+            { id: 142, name: "Thermalright Phantom Spirit 120 SE", category: "Cooler", price: 38, powerDraw: 5, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuaK2SY4TM18rDD09chxmnPtUr4pms8b-OHRbEoUs72MG96lU-C7huuYY&s=10", specs: "Dual Tower Air Cooler, 7 Heat Pipes" },
+            { id: 143, name: "Lian Li Galahad II Trinity 360", category: "Cooler", price: 169, powerDraw: 15, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOEqce_qI9NM92vBfpo3Adn58cEDXuRAQUMbQ1i261CCcdS_IBIGB57sE&s=10", specs: "360mm AIO Liquid Cooler, High Performance" },
+            { id: 144, name: "be quiet! Dark Rock Pro 4", category: "Cooler", price: 89, powerDraw: 5, image: "https://m.media-amazon.com/images/I/61CGQH59UGL._AC_UF1000,1000_QL80_.jpg", specs: "Dual Tower Air Cooler, Silent Wings Fans" },
+            { id: 145, name: "Cooler Master Hyper 212 Black", category: "Cooler", price: 29, powerDraw: 5, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUPnSdoj-Ub-0dVUGk4QslEwtDktG5G4XKbHw7AoP8Vi2RrdM6Tw-XCeP7&s=10", specs: "Single Tower Air Cooler, 4 Heat Pipes" }
         ];
 
         // --- Data Enrichment ---
