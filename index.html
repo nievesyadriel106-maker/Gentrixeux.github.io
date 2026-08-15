@@ -103,6 +103,7 @@
             position: sticky; top: 100px;
         }
 
+        /* --- Dropdown Filter Menu Styles --- */
         .filter-menu-details summary {
             font-size: 1.15rem; font-weight: bold; cursor: pointer; padding: 0.85rem 1rem;
             background-color: var(--bg); border: 2px solid var(--border); border-radius: 8px;
@@ -136,6 +137,7 @@
 
         .main-content { flex: 1; }
 
+        /* --- Category Sections --- */
         .category-section {
             margin-bottom: 2rem; background: var(--surface); border-radius: 12px;
             border: 1px solid var(--border); box-shadow: 0 4px 6px -1px var(--shadow); overflow: hidden;
@@ -291,6 +293,7 @@
                         <label class="filter-label"><input type="checkbox" class="category-filter" value="GPU"> Graphics Cards (GPU)</label>
                         <label class="filter-label"><input type="checkbox" class="category-filter" value="RAM"> Memory (RAM)</label>
                         <label class="filter-label"><input type="checkbox" class="category-filter" value="Motherboard"> Motherboards</label>
+                        <label class="filter-label"><input type="checkbox" class="category-filter" value="Storage"> Storage</label>
                         <label class="filter-label"><input type="checkbox" class="category-filter" value="PSU"> Power Supply (PSU)</label>
                         <label class="filter-label"><input type="checkbox" class="category-filter" value="Cooler"> CPU Coolers</label>
                         <label class="filter-label"><input type="checkbox" class="category-filter" value="Case"> PC Cases</label>
@@ -381,7 +384,7 @@
             }
         });
 
-        // --- Mock Database (145 Items) ---
+        // --- Mock Database (155 Items) ---
         let partsDatabase = [
             // --- CPUs ---
             { id: 1, name: "Intel Core i9-14900K", category: "CPU", price: 589, powerDraw: 253, image: "https://c1.neweggimages.com/productimage/nb1280/19-118-462-03.jpg", specs: "24 Cores (8P+16E), 32 Threads, Up to 6.0 GHz" },
@@ -535,7 +538,19 @@
             { id: 142, name: "Thermalright Phantom Spirit 120 SE", category: "Cooler", price: 38, powerDraw: 5, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuaK2SY4TM18rDD09chxmnPtUr4pms8b-OHRbEoUs72MG96lU-C7huuYY&s=10", specs: "Dual Tower Air Cooler, 7 Heat Pipes" },
             { id: 143, name: "Lian Li Galahad II Trinity 360", category: "Cooler", price: 169, powerDraw: 15, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOEqce_qI9NM92vBfpo3Adn58cEDXuRAQUMbQ1i261CCcdS_IBIGB57sE&s=10", specs: "360mm AIO Liquid Cooler, High Performance" },
             { id: 144, name: "be quiet! Dark Rock Pro 4", category: "Cooler", price: 89, powerDraw: 5, image: "https://m.media-amazon.com/images/I/61CGQH59UGL._AC_UF1000,1000_QL80_.jpg", specs: "Dual Tower Air Cooler, Silent Wings Fans" },
-            { id: 145, name: "Cooler Master Hyper 212 Black", category: "Cooler", price: 29, powerDraw: 5, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUPnSdoj-Ub-0dVUGk4QslEwtDktG5G4XKbHw7AoP8Vi2RrdM6Tw-XCeP7&s=10", specs: "Single Tower Air Cooler, 4 Heat Pipes" }
+            { id: 145, name: "Cooler Master Hyper 212 Black", category: "Cooler", price: 29, powerDraw: 5, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUPnSdoj-Ub-0dVUGk4QslEwtDktG5G4XKbHw7AoP8Vi2RrdM6Tw-XCeP7&s=10", specs: "Single Tower Air Cooler, 4 Heat Pipes" },
+            
+            // --- Storage Drives ---
+            { id: 146, name: "Samsung 990 PRO 2TB", category: "Storage", price: 169, powerDraw: 7, image: "https://c1.neweggimages.com/productimage/nb1280/20-147-861-01.jpg", specs: "2TB NVMe M.2 PCIe 4.0, up to 7450 MB/s" },
+            { id: 147, name: "WD Black SN850X 2TB", category: "Storage", price: 159, powerDraw: 7, image: "https://c1.neweggimages.com/productimage/nb1280/20-250-247-02.jpg", specs: "2TB NVMe M.2 PCIe 4.0, up to 7300 MB/s" },
+            { id: 148, name: "Crucial T700 2TB", category: "Storage", price: 269, powerDraw: 11, image: "https://c1.neweggimages.com/productimage/nb1280/20-156-329-19.jpg", specs: "2TB NVMe M.2 PCIe 5.0, up to 12400 MB/s" },
+            { id: 149, name: "Kingston KC3000 2TB", category: "Storage", price: 139, powerDraw: 7, image: "https://c1.neweggimages.com/productimage/nb1280/20-242-660-S01.jpg", specs: "2TB NVMe M.2 PCIe 4.0, up to 7000 MB/s" },
+            { id: 150, name: "Samsung 970 EVO Plus 1TB", category: "Storage", price: 89, powerDraw: 6, image: "https://c1.neweggimages.com/productimage/nb1280/20-147-745-S01.jpg", specs: "1TB NVMe M.2 PCIe 3.0, up to 3500 MB/s" },
+            { id: 151, name: "Crucial P3 Plus 1TB", category: "Storage", price: 65, powerDraw: 6, image: "https://c1.neweggimages.com/productimage/nb1280/20-156-299-01.jpg", specs: "1TB NVMe M.2 PCIe 4.0, up to 5000 MB/s" },
+            { id: 152, name: "Samsung 870 EVO 1TB", category: "Storage", price: 85, powerDraw: 4, image: "https://c1.neweggimages.com/productimage/nb1280/20-147-792-V01.jpg", specs: "1TB 2.5-inch SATA III SSD, 560 MB/s Read" },
+            { id: 153, name: "Crucial MX500 1TB", category: "Storage", price: 75, powerDraw: 4, image: "https://c1.neweggimages.com/productimage/nb1280/20-156-174-V09.jpg", specs: "1TB 2.5-inch SATA III SSD, 560 MB/s Read" },
+            { id: 154, name: "Seagate Barracuda 2TB", category: "Storage", price: 55, powerDraw: 5, image: "https://c1.neweggimages.com/productimage/nb1280/22-184-773-V01.jpg", specs: "2TB 3.5-inch SATA HDD, 7200RPM, 256MB Cache" },
+            { id: 155, name: "WD Blue 2TB", category: "Storage", price: 55, powerDraw: 5, image: "https://c1.neweggimages.com/productimage/nb1280/20-250-267-01.png", specs: "2TB 3.5-inch SATA HDD, 7200RPM, 256MB Cache" }
         ];
 
         // --- Data Enrichment & Compatibility Engine ---
@@ -554,7 +569,7 @@
                 
                 if (part.name.includes('Intel')) {
                     compat.socket = 'LGA 1700';
-                    compat.ramType = 'DDR5'; // Modern Intel assumed DDR5 preferred
+                    compat.ramType = 'DDR5'; 
                 } else if (part.name.includes('79') || part.name.includes('78') || part.name.includes('77') || part.name.includes('76')) {
                     compat.socket = 'AM5';
                 } else {
@@ -599,6 +614,18 @@
                 dimensions = part.name.includes('360') ? "397mm x 120mm x 27mm" : "125mm x 135mm x 155mm";
                 extendedDetails = { "Type": part.name.includes('360') ? "AIO Liquid Cooler" : "Air Cooler", "Socket Support": "LGA 1700 / AM5", "Noise Level": "29.5 dBA" };
             }
+            else if (part.category === 'Storage') {
+                if (part.specs.includes('M.2')) {
+                    dimensions = "80mm x 22mm x 2.3mm";
+                    extendedDetails = { "Form Factor": "M.2 2280", "Interface": part.specs.includes('PCIe 5.0') ? "PCIe 5.0 x4" : "PCIe 4.0/3.0 x4", "Type": "NVMe SSD" };
+                } else if (part.specs.includes('2.5')) {
+                    dimensions = "100mm x 69.85mm x 6.8mm";
+                    extendedDetails = { "Form Factor": "2.5-inch", "Interface": "SATA III 6Gb/s", "Type": "SATA SSD" };
+                } else {
+                    dimensions = "147mm x 101.6mm x 26.1mm";
+                    extendedDetails = { "Form Factor": "3.5-inch", "Interface": "SATA III 6Gb/s", "Type": "HDD" };
+                }
+            }
 
             return { ...part, dimensions, extendedDetails, compat };
         });
@@ -621,21 +648,18 @@
                 }
             });
 
-            // 1. CPU & Motherboard
             if (cpu && mobo) {
                 if (cpu.compat.socket !== mobo.compat.socket) {
                     errors.push(`<strong>Socket Mismatch:</strong> ${cpu.name} uses ${cpu.compat.socket}, but the ${mobo.name} uses ${mobo.compat.socket}.`);
                 }
             }
 
-            // 2. Motherboard & RAM
             if (mobo && ram) {
                 if (mobo.compat.ramType !== 'DDR4/DDR5' && mobo.compat.ramType !== ram.compat.ramType) {
                     errors.push(`<strong>RAM Mismatch:</strong> ${mobo.name} supports ${mobo.compat.ramType}, but the ${ram.name} is ${ram.compat.ramType}.`);
                 }
             }
 
-            // 3. Motherboard & Case
             if (mobo && pcase) {
                 if (mobo.compat.formFactor > pcase.compat.maxFormFactor) {
                     let mType = mobo.compat.formFactor === 3 ? "E-ATX" : "ATX";
@@ -644,9 +668,8 @@
                 }
             }
 
-            // 4. Power Supply
             if (psu) {
-                let estimatedTotal = totalPower + 100; // Buffer for fans/drives
+                let estimatedTotal = totalPower + 100; 
                 if (estimatedTotal > psu.powerDraw) {
                     errors.push(`<strong>Insufficient Power:</strong> Your system draws an estimated ${estimatedTotal}W, but your PSU only provides ${psu.powerDraw}W.`);
                 } else if (estimatedTotal > psu.powerDraw * 0.85) {
@@ -687,12 +710,13 @@
                 return;
             }
 
-            const categories = ['CPU', 'GPU', 'RAM', 'Motherboard', 'PSU', 'Cooler', 'Case'];
+            const categories = ['CPU', 'GPU', 'RAM', 'Motherboard', 'Storage', 'PSU', 'Cooler', 'Case'];
             const categoryLabels = {
                 'CPU': '🖥️ Processors (CPU)',
                 'GPU': '🎮 Graphics Cards (GPU)',
                 'RAM': '🖴 Memory (RAM)',
                 'Motherboard': '🎛️ Motherboards',
+                'Storage': '💾 Storage',
                 'PSU': '⚡ Power Supplies (PSU)',
                 'Cooler': '❄️ CPU Coolers',
                 'Case': '🗄️ PC Cases'
