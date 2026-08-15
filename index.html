@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta id="viewportMeta" name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PC Part Compare</title>
+    <title>PC Part Compare & Builder</title>
     <style>
         /* Light Mode Variables */
         :root {
@@ -103,7 +103,6 @@
             position: sticky; top: 100px;
         }
 
-        /* --- Dropdown Filter Menu Styles --- */
         .filter-menu-details summary {
             font-size: 1.15rem; font-weight: bold; cursor: pointer; padding: 0.85rem 1rem;
             background-color: var(--bg); border: 2px solid var(--border); border-radius: 8px;
@@ -137,7 +136,6 @@
 
         .main-content { flex: 1; }
 
-        /* --- Category Sections --- */
         .category-section {
             margin-bottom: 2rem; background: var(--surface); border-radius: 12px;
             border: 1px solid var(--border); box-shadow: 0 4px 6px -1px var(--shadow); overflow: hidden;
@@ -196,7 +194,7 @@
 
         /* --- Modals Styles --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(6px); }
-        .modal-content { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 95%; max-width: 1200px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .modal-content { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; width: 95%; max-width: 1300px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
         .details-modal-content { max-width: 900px; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; border-bottom: 2px solid var(--border); }
         .modal-header h2 { margin: 0; font-size: 1.5rem; }
@@ -219,6 +217,13 @@
         .compare-table td:first-child { font-weight: bold; background-color: var(--bg); width: 180px; position: sticky; left: 0; z-index: 2; }
         .compare-table th:first-child { position: sticky; left: 0; z-index: 3; }
         .table-img { width: 100%; max-width: 150px; border-radius: 8px; border: 1px solid var(--border); background-color: #ffffff; }
+
+        /* --- Compatibility Banner Styles --- */
+        .compat-success { background-color: var(--success); color: white; padding: 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; font-weight: bold; }
+        .compat-error { background-color: var(--surface); border: 2px solid var(--danger); padding: 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; }
+        .compat-error h3 { margin-top: 0; color: var(--danger); }
+        .compat-error ul { margin-bottom: 0; }
+        .compat-error li { margin-bottom: 0.5rem; }
 
         /* =========================================
            RESPONSIVE & VIEW TOGGLE STYLES
@@ -262,7 +267,7 @@
     </div>
 
     <header>
-        <h2>💻 PC Part Compare</h2>
+        <h2>💻 PC Part Compare & Builder</h2>
         <div class="header-controls">
             <div class="search-container">
                 <input type="text" id="searchInput" aria-label="Search components" placeholder="Search for components...">
@@ -306,13 +311,14 @@
         </main>
     </div>
 
-    <button id="floatingCompareBtn" class="floating-btn">View Comparison (0)</button>
+    <!-- Re-named Floating Button -->
+    <button id="floatingCompareBtn" class="floating-btn">PC Builder / Compare (0)</button>
 
     <!-- Comparison Modal -->
     <div id="compareModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="compareTitle">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="compareTitle">Side-by-Side Comparison</h2>
+                <h2 id="compareTitle">Builder & Compatibility Check</h2>
                 <button id="closeCompareBtn" class="close-btn" aria-label="Close modal">&times;</button>
             </div>
             <div class="table-responsive" id="compareTableContainer"></div>
@@ -340,7 +346,6 @@
 
         viewToggleBtn.addEventListener('click', () => {
             isMobileMode = !isMobileMode;
-            
             if (isMobileMode) {
                 document.body.classList.remove('force-desktop');
                 document.body.classList.add('force-mobile');
@@ -376,7 +381,7 @@
             }
         });
 
-        // --- Mock Database with 145 Items and Accurate Images ---
+        // --- Mock Database (145 Items) ---
         let partsDatabase = [
             // --- CPUs ---
             { id: 1, name: "Intel Core i9-14900K", category: "CPU", price: 589, powerDraw: 253, image: "https://c1.neweggimages.com/productimage/nb1280/19-118-462-03.jpg", specs: "24 Cores (8P+16E), 32 Threads, Up to 6.0 GHz" },
@@ -533,36 +538,126 @@
             { id: 145, name: "Cooler Master Hyper 212 Black", category: "Cooler", price: 29, powerDraw: 5, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUPnSdoj-Ub-0dVUGk4QslEwtDktG5G4XKbHw7AoP8Vi2RrdM6Tw-XCeP7&s=10", specs: "Single Tower Air Cooler, 4 Heat Pipes" }
         ];
 
-        // --- Data Enrichment ---
+        // --- Data Enrichment & Compatibility Engine ---
         partsDatabase = partsDatabase.map(part => {
             let dimensions = "Not specified";
             let extendedDetails = {};
+            let compat = { socket: null, ramType: null, formFactor: null, maxFormFactor: null };
 
             if (part.category === 'GPU') {
                 dimensions = "336mm (L) x 140mm (W) x 61mm (H) [3-slot]";
                 extendedDetails = { "Interface": "PCIe 4.0 x16", "Recommended PSU": "850W", "Ports": "3x DisplayPort 1.4a, 1x HDMI 2.1" };
-            } else if (part.category === 'CPU') {
+            } 
+            else if (part.category === 'CPU') {
                 dimensions = "37.5mm x 37.5mm";
                 extendedDetails = { "Socket": part.specs.includes('LGA') ? 'LGA 1700' : 'AM5 / AM4', "Integrated Graphics": "Yes / Varies", "Cooler Included": "No" };
-            } else if (part.category === 'Motherboard') {
+                
+                if (part.name.includes('Intel')) {
+                    compat.socket = 'LGA 1700';
+                    compat.ramType = 'DDR5'; // Modern Intel assumed DDR5 preferred
+                } else if (part.name.includes('79') || part.name.includes('78') || part.name.includes('77') || part.name.includes('76')) {
+                    compat.socket = 'AM5';
+                } else {
+                    compat.socket = 'AM4';
+                }
+            } 
+            else if (part.category === 'Motherboard') {
                 const isATX = part.specs.includes('ATX') && !part.specs.includes('Micro');
                 dimensions = isATX ? "305mm x 244mm (ATX)" : "244mm x 244mm (Micro-ATX)";
                 extendedDetails = { "Form Factor": isATX ? "ATX" : "Micro-ATX", "M.2 Slots": "3x PCIe 4.0 NVMe", "Rear USB Ports": "8-10 ports" };
-            } else if (part.category === 'RAM') {
+                
+                if (part.specs.includes('LGA 1700')) compat.socket = 'LGA 1700';
+                else if (part.specs.includes('AM5')) compat.socket = 'AM5';
+                else if (part.specs.includes('AM4')) compat.socket = 'AM4';
+
+                if (part.specs.includes('DDR4') && !part.specs.includes('DDR5')) compat.ramType = 'DDR4';
+                else if (part.specs.includes('DDR4/DDR5')) compat.ramType = 'DDR4/DDR5';
+                else compat.ramType = 'DDR5';
+
+                if (part.specs.includes('E-ATX')) compat.formFactor = 3;
+                else if (part.specs.includes('Micro-ATX')) compat.formFactor = 1;
+                else compat.formFactor = 2; // ATX
+            } 
+            else if (part.category === 'RAM') {
                 dimensions = "133.35mm x 34.1mm x 7.1mm";
                 extendedDetails = { "Modules": "2 Sticks", "Voltage": "1.35V - 1.4V", "Heat Spreader": "Aluminum" };
-            } else if (part.category === 'PSU') {
+                compat.ramType = part.specs.includes('DDR4') ? 'DDR4' : 'DDR5';
+            } 
+            else if (part.category === 'PSU') {
                 dimensions = part.specs.includes('SFX') ? "125mm x 100mm x 63.5mm" : "150mm x 160mm x 86mm";
                 extendedDetails = { "Form Factor": part.specs.includes('SFX') ? "SFX" : "ATX", "Fan Size": "135mm FDB Fan", "Cabling": "Fully Modular" };
-            } else if (part.category === 'Case') {
+            } 
+            else if (part.category === 'Case') {
                 dimensions = "460mm x 225mm x 490mm (Avg)";
                 extendedDetails = { "Form Factor": "ATX Mid Tower", "Included Fans": "2x 120mm", "Front Panel": "Mesh / Glass" };
-            } else if (part.category === 'Cooler') {
+                
+                if (part.specs.includes('E-ATX')) compat.maxFormFactor = 3;
+                else if (part.specs.includes('Micro-ATX')) compat.maxFormFactor = 1;
+                else compat.maxFormFactor = 2; // ATX Mid
+            } 
+            else if (part.category === 'Cooler') {
                 dimensions = part.name.includes('360') ? "397mm x 120mm x 27mm" : "125mm x 135mm x 155mm";
                 extendedDetails = { "Type": part.name.includes('360') ? "AIO Liquid Cooler" : "Air Cooler", "Socket Support": "LGA 1700 / AM5", "Noise Level": "29.5 dBA" };
             }
-            return { ...part, dimensions, extendedDetails };
+
+            return { ...part, dimensions, extendedDetails, compat };
         });
+
+        // --- Compatibility Checker Engine ---
+        function checkCompatibility(items) {
+            let errors = [];
+            let warnings = [];
+
+            const cpu = items.find(i => i.category === 'CPU');
+            const mobo = items.find(i => i.category === 'Motherboard');
+            const ram = items.find(i => i.category === 'RAM');
+            const pcase = items.find(i => i.category === 'Case');
+            const psu = items.find(i => i.category === 'PSU');
+            
+            let totalPower = 0;
+            items.forEach(i => {
+                if(i.category !== 'PSU' && i.category !== 'Case') {
+                    totalPower += i.powerDraw || 0;
+                }
+            });
+
+            // 1. CPU & Motherboard
+            if (cpu && mobo) {
+                if (cpu.compat.socket !== mobo.compat.socket) {
+                    errors.push(`<strong>Socket Mismatch:</strong> ${cpu.name} uses ${cpu.compat.socket}, but the ${mobo.name} uses ${mobo.compat.socket}.`);
+                }
+            }
+
+            // 2. Motherboard & RAM
+            if (mobo && ram) {
+                if (mobo.compat.ramType !== 'DDR4/DDR5' && mobo.compat.ramType !== ram.compat.ramType) {
+                    errors.push(`<strong>RAM Mismatch:</strong> ${mobo.name} supports ${mobo.compat.ramType}, but the ${ram.name} is ${ram.compat.ramType}.`);
+                }
+            }
+
+            // 3. Motherboard & Case
+            if (mobo && pcase) {
+                if (mobo.compat.formFactor > pcase.compat.maxFormFactor) {
+                    let mType = mobo.compat.formFactor === 3 ? "E-ATX" : "ATX";
+                    let cType = pcase.compat.maxFormFactor === 2 ? "ATX" : "Micro-ATX";
+                    errors.push(`<strong>Size Mismatch:</strong> ${mobo.name} is an ${mType} board, but the ${pcase.name} only supports up to ${cType}.`);
+                }
+            }
+
+            // 4. Power Supply
+            if (psu) {
+                let estimatedTotal = totalPower + 100; // Buffer for fans/drives
+                if (estimatedTotal > psu.powerDraw) {
+                    errors.push(`<strong>Insufficient Power:</strong> Your system draws an estimated ${estimatedTotal}W, but your PSU only provides ${psu.powerDraw}W.`);
+                } else if (estimatedTotal > psu.powerDraw * 0.85) {
+                    warnings.push(`<strong>Low Power Headroom:</strong> Your system draws an estimated ${estimatedTotal}W. A ${psu.powerDraw}W PSU is cutting it close.`);
+                }
+            } else if (totalPower > 0) {
+                warnings.push(`Estimated system power draw is ${totalPower + 100}W. Don't forget to add a sufficient Power Supply!`);
+            }
+
+            return { errors, warnings };
+        }
 
         // --- State ---
         let currentFilteredProducts = partsDatabase;
@@ -638,7 +733,7 @@
                         <div class="specs">
                             <strong>Brief Specs:</strong>
                             ${part.specs}<br>
-                            <span class="${powerClass}">${powerLabel}</span>
+                            <span class="${powerClass}">${part.category === 'Case' ? '🖥️ PC Case' : powerLabel}</span>
                         </div>
                         <button class="${btnClass}" onclick="event.stopPropagation(); toggleCompare(${part.id})" aria-label="${isCompared ? 'Remove from comparison' : 'Add to comparison'}">${btnText}</button>
                     `;
@@ -672,7 +767,7 @@
                     <h3>Technical Specifications</h3>
                     <ul class="details-specs-list">
                         <li><strong>Base Specs:</strong> <span>${part.specs}</span></li>
-                        <li><strong>Power ${part.category === 'PSU' ? 'Capacity' : 'Draw'}:</strong> <span>${part.powerDraw}W</span></li>
+                        ${part.category !== 'Case' ? `<li><strong>Power ${part.category === 'PSU' ? 'Capacity' : 'Draw'}:</strong> <span>${part.powerDraw}W</span></li>` : ''}
                         ${detailsListHtml}
                         <li><strong>Dimensions:</strong> <span>${part.dimensions}</span></li>
                     </ul>
@@ -693,8 +788,8 @@
             if (index > -1) {
                 comparisonList.splice(index, 1); 
             } else {
-                if (comparisonList.length >= 4) {
-                    alert("You can only compare up to 4 items side-by-side cleanly.");
+                if (comparisonList.length >= 8) {
+                    alert("You can only compare up to 8 items in your PC build.");
                     return;
                 }
                 comparisonList.push(id); 
@@ -712,7 +807,7 @@
         function updateFloatingButton() {
             if (comparisonList.length > 0) {
                 floatingCompareBtn.style.display = 'block';
-                floatingCompareBtn.textContent = `View Comparison (${comparisonList.length})`;
+                floatingCompareBtn.textContent = `PC Builder / Compare (${comparisonList.length})`;
             } else {
                 floatingCompareBtn.style.display = 'none';
             }
@@ -725,7 +820,33 @@
             }
 
             const itemsToCompare = comparisonList.map(id => partsDatabase.find(p => p.id === id));
-            let html = '<table class="compare-table">';
+            
+            // Generate Compatibility Banner
+            let compatHtml = '';
+            if (itemsToCompare.length > 1) {
+                const issues = checkCompatibility(itemsToCompare);
+                if (issues.errors.length === 0 && issues.warnings.length === 0) {
+                    compatHtml = '<div class="compat-success">✅ Compatibility Check: All selected parts appear to be compatible!</div>';
+                } else {
+                    compatHtml = '<div class="compat-error">';
+                    if (issues.errors.length > 0) {
+                        compatHtml += '<h3>⚠️ Compatibility Errors Found</h3><ul>';
+                        issues.errors.forEach(e => compatHtml += `<li>❌ ${e}</li>`);
+                        compatHtml += '</ul><br>';
+                    }
+                    if (issues.warnings.length > 0) {
+                        if(issues.errors.length === 0) compatHtml += '<h3>⚠️ Warnings</h3>';
+                        compatHtml += '<ul>';
+                        issues.warnings.forEach(w => compatHtml += `<li>⚠️ ${w}</li>`);
+                        compatHtml += '</ul>';
+                    }
+                    compatHtml += '</div>';
+                }
+            } else {
+                compatHtml = '<div style="background: var(--bg); border: 1px solid var(--border); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; color: var(--text-light);">ℹ️ Add more parts to check compatibility.</div>';
+            }
+
+            let html = compatHtml + '<table class="compare-table">';
             
             html += '<tr><th>Image</th>';
             itemsToCompare.forEach(item => { html += `<td><img src="${item.image}" alt="${item.name}" class="table-img"></td>`; });
@@ -737,8 +858,12 @@
             itemsToCompare.forEach(item => { html += `<td class="price" style="margin:0;">$${item.price}</td>`; });
             html += '</tr><tr><td>Power / Capacity</td>';
             itemsToCompare.forEach(item => { 
-                const label = item.category === 'PSU' ? '(Max Capacity)' : '(Power Draw)';
-                html += `<td><strong>${item.powerDraw}W</strong> <br><span style="font-size:0.85em; color:var(--text-light)">${label}</span></td>`; 
+                if (item.category === 'Case') {
+                    html += `<td><strong>N/A</strong></td>`;
+                } else {
+                    const label = item.category === 'PSU' ? '(Max Capacity)' : '(Power Draw)';
+                    html += `<td><strong>${item.powerDraw}W</strong> <br><span style="font-size:0.85em; color:var(--text-light)">${label}</span></td>`; 
+                }
             });
             html += '</tr><tr><td>Base Specs</td>';
             itemsToCompare.forEach(item => { html += `<td>${item.specs}</td>`; });
@@ -747,6 +872,7 @@
             html += '</tr><tr><td>Action</td>';
             itemsToCompare.forEach(item => { html += `<td><button class="btn btn-remove" onclick="toggleCompare(${item.id})">Remove Item</button></td>`; });
             html += '</tr></table>';
+            
             compareTableContainer.innerHTML = html;
         }
 
