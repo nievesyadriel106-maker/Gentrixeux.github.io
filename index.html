@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- The viewport meta tag ensures the page is immediately user-friendly on phones when opened -->
+    <meta id="viewportMeta" name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PC Part Compare</title>
     <style>
         /* Light Mode Variables */
@@ -59,6 +60,8 @@
         header h2 { margin: 0; font-size: 1.5rem; }
 
         .header-controls { display: flex; gap: 1rem; align-items: center; flex: 1; justify-content: flex-end; }
+        .header-buttons { display: flex; gap: 0.5rem; }
+        
         .search-container { flex: 1; max-width: 400px; }
         .search-container input {
             padding: 0.85rem 1rem; width: 100%; box-sizing: border-box;
@@ -69,8 +72,9 @@
 
         .theme-toggle {
             background: var(--surface); color: var(--text); border: 2px solid var(--border);
-            padding: 0.85rem 1.25rem; border-radius: 8px; cursor: pointer;
+            padding: 0.85rem 1rem; border-radius: 8px; cursor: pointer;
             font-size: 1rem; font-weight: bold; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
         }
         .theme-toggle:hover { background: var(--bg); border-color: var(--primary); }
 
@@ -116,26 +120,15 @@
 
         .main-content { flex: 1; }
 
-        /* --- Category Sections (New Layout) --- */
+        /* --- Category Sections --- */
         .category-section {
-            margin-bottom: 2rem;
-            background: var(--surface);
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 6px -1px var(--shadow);
-            overflow: hidden;
+            margin-bottom: 2rem; background: var(--surface); border-radius: 12px;
+            border: 1px solid var(--border); box-shadow: 0 4px 6px -1px var(--shadow); overflow: hidden;
         }
         .category-section summary {
-            font-size: 1.3rem;
-            font-weight: 800;
-            padding: 1.25rem 1.5rem;
-            background: var(--surface);
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background 0.2s;
-            list-style: none;
+            font-size: 1.3rem; font-weight: 800; padding: 1.25rem 1.5rem;
+            background: var(--surface); cursor: pointer; display: flex;
+            justify-content: space-between; align-items: center; transition: background 0.2s; list-style: none;
         }
         .category-section summary::-webkit-details-marker { display: none; }
         .category-section summary:hover { background: var(--bg); }
@@ -144,18 +137,14 @@
         .category-section[open] summary::after { transform: rotate(180deg); }
         
         .category-content {
-            padding: 1.5rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            background: var(--bg);
+            padding: 1.5rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem; background: var(--bg);
         }
 
         .card {
             background: var(--surface); border: 1px solid var(--border);
             border-radius: 12px; padding: 1.75rem; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-            display: flex; flex-direction: column; box-shadow: 0 4px 6px -1px var(--shadow);
-            cursor: pointer;
+            display: flex; flex-direction: column; box-shadow: 0 4px 6px -1px var(--shadow); cursor: pointer;
         }
         .card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px var(--shadow); border-color: var(--primary); }
 
@@ -164,7 +153,7 @@
             margin-bottom: 1rem; background-color: #ffffff; border: 1px solid var(--border); padding: 0.5rem; box-sizing: border-box;
         }
         
-        .category-badge { background: var(--primary); color: white; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; margin-bottom: 0.75rem; width: fit-content; display: none; /* Hidden since they are grouped now */ }
+        .category-badge { background: var(--primary); color: white; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: none; }
         .card h3 { font-size: 1.25rem; margin: 0.25rem 0; }
         .price { font-size: 1.75rem; font-weight: 800; color: var(--text); margin: 1rem 0; }
         .specs { color: var(--text-light); font-size: 1rem; line-height: 1.6; margin-bottom: 1.5rem; flex-grow: 1; }
@@ -214,17 +203,41 @@
         .compare-table th:first-child { position: sticky; left: 0; z-index: 3; }
         .table-img { width: 100%; max-width: 150px; border-radius: 8px; border: 1px solid var(--border); background-color: #ffffff; }
 
+        /* =========================================
+           RESPONSIVE & VIEW TOGGLE STYLES
+           ========================================= */
+
+        /* 1. Default Mobile Responsive (Triggers naturally on phones) */
         @media (max-width: 900px) {
-            .layout { flex-direction: column; padding: 1rem; }
-            .sidebar { width: 100%; position: relative; top: 0; display: flex; flex-direction: column; gap: 1rem; padding: 1rem; }
-            .header-controls { flex-direction: column-reverse; width: 100%; align-items: stretch; }
-            .search-container { max-width: 100%; }
-            .category-content { grid-template-columns: 1fr; }
-            .floating-btn { bottom: 1rem; right: 1rem; left: 1rem; width: calc(100% - 2rem); text-align: center; border-radius: 12px; }
-            .table-responsive { padding: 1rem; }
-            .details-body { flex-direction: column; }
-            .details-image { max-width: 100%; }
+            body:not(.force-desktop) .layout { flex-direction: column; padding: 1rem; }
+            body:not(.force-desktop) .sidebar { width: 100%; position: relative; top: 0; display: flex; flex-direction: column; gap: 1rem; padding: 1rem; }
+            body:not(.force-desktop) .header-controls { flex-direction: column-reverse; width: 100%; align-items: stretch; }
+            body:not(.force-desktop) .header-buttons { width: 100%; justify-content: space-between; }
+            body:not(.force-desktop) .theme-toggle { flex: 1; justify-content: center; }
+            body:not(.force-desktop) .search-container { max-width: 100%; }
+            body:not(.force-desktop) .category-content { grid-template-columns: 1fr; }
+            body:not(.force-desktop) .floating-btn { bottom: 1rem; right: 1rem; left: 1rem; width: calc(100% - 2rem); text-align: center; border-radius: 12px; }
+            body:not(.force-desktop) .table-responsive { padding: 1rem; }
+            body:not(.force-desktop) .details-body { flex-direction: column; }
+            body:not(.force-desktop) .details-image { max-width: 100%; }
         }
+
+        /* 2. Force Mobile View (Triggered on Desktop when "Phone Mode" is clicked) */
+        body.force-mobile .layout { flex-direction: column; padding: 1rem; max-width: 600px; margin: 0 auto; }
+        body.force-mobile .sidebar { width: 100%; position: relative; top: 0; display: flex; flex-direction: column; gap: 1rem; padding: 1rem; }
+        body.force-mobile .header-controls { flex-direction: column-reverse; width: 100%; align-items: stretch; max-width: 600px; margin: 0 auto; }
+        body.force-mobile .header-buttons { width: 100%; justify-content: space-between; }
+        body.force-mobile .theme-toggle { flex: 1; justify-content: center; }
+        body.force-mobile .search-container { max-width: 100%; }
+        body.force-mobile .category-content { grid-template-columns: 1fr; }
+        body.force-mobile .floating-btn { bottom: 1rem; right: 0; left: 0; width: calc(100% - 2rem); text-align: center; border-radius: 12px; max-width: 568px; margin: 0 auto; }
+        body.force-mobile .table-responsive { padding: 1rem; }
+        body.force-mobile .details-body { flex-direction: column; }
+        body.force-mobile .details-image { max-width: 100%; }
+
+        /* 3. Force Desktop View (Triggered on Mobile when "PC Mode" is clicked) */
+        body.force-desktop { min-width: 1200px; }
+
     </style>
 </head>
 <body>
@@ -235,13 +248,16 @@
             <div class="search-container">
                 <input type="text" id="searchInput" aria-label="Search components" placeholder="Search for CPUs, GPUs, RAM...">
             </div>
-            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">🌙 Dark Mode</button>
+            <div class="header-buttons">
+                <!-- New Mode Toggle Button -->
+                <button id="viewToggleBtn" class="theme-toggle" aria-label="Toggle PC and Phone View">📱 Phone Mode</button>
+                <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">🌙 Dark Mode</button>
+            </div>
         </div>
     </header>
 
     <div class="layout">
         <aside class="sidebar">
-            <!-- Filter Drop-down Menu -->
             <details class="filter-menu-details" id="filterMenu" open>
                 <summary>⚙️ Filter Options</summary>
                 
@@ -266,7 +282,7 @@
         </aside>
 
         <main class="main-content" id="productGrid">
-            <!-- Dropdowns will be generated here by JavaScript -->
+            <!-- Dropdowns generated by JS -->
         </main>
     </div>
 
@@ -295,21 +311,40 @@
     </div>
 
     <script>
-        // Static Reliable Image Links (Real Product Images)
-        const IMAGES = {
-            intelCPU: "https://c1.neweggimages.com/productimage/nb1280/19-118-462-03.jpg",
-            amdCPU: "https://c1.neweggimages.com/productimage/nb1280/19-113-791-03.png",
-            nvidiaGPU: "https://c1.neweggimages.com/productimage/nb1280/B1AHS221107073TMR4E.jpg",
-            amdGPU: "https://c1.neweggimages.com/productimage/nb1280/14-930-084-06.jpg",
-            corsairRAM: "https://c1.neweggimages.com/productimage/nb1280/20-982-277-04.jpg",
-            gskillRAM: "https://c1.neweggimages.com/productimage/nb1280/20-374-429-13.png",
-            genericRAM: "https://c1.neweggimages.com/productimage/nb1280/20-331-811-06.jpg",
-            asusMobo: "https://c1.neweggimages.com/productimage/nb1280/13-119-597-V01.jpg",
-            msiMobo: "https://c1.neweggimages.com/productimage/nb1280/13-144-561-14.jpg",
-            gigabyteMobo: "https://c1.neweggimages.com/ProductImageCompressAll1280/13-145-415-01.jpg",
-            corsairPSU: "https://c1.neweggimages.com/productimage/nb1280/17-139-333-04.png",
-            evgaPSU: "https://m.media-amazon.com/images/I/61966PqKcoS._AC_UF350,350_QL80_.jpg"
-        };
+        // --- View Mode Toggle Logic (PC vs Phone) ---
+        const viewToggleBtn = document.getElementById('viewToggleBtn');
+        const viewportMeta = document.getElementById('viewportMeta');
+        
+        // Determine if the screen naturally acts as mobile
+        let isMobileMode = window.innerWidth <= 900;
+        
+        // Setup initial text
+        viewToggleBtn.innerHTML = isMobileMode ? '💻 PC Mode' : '📱 Phone Mode';
+
+        viewToggleBtn.addEventListener('click', () => {
+            isMobileMode = !isMobileMode;
+            
+            if (isMobileMode) {
+                // User wants PHONE mode
+                document.body.classList.remove('force-desktop');
+                document.body.classList.add('force-mobile');
+                viewToggleBtn.innerHTML = '💻 PC Mode';
+                viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0');
+            } else {
+                // User wants PC mode
+                document.body.classList.remove('force-mobile');
+                document.body.classList.add('force-desktop');
+                viewToggleBtn.innerHTML = '📱 Phone Mode';
+                
+                // If the actual physical device is small, we force the viewport to be 1200px wide
+                // so the phone is tricked into rendering the full desktop layout!
+                if (window.screen.width <= 900 || window.innerWidth <= 900) {
+                    viewportMeta.setAttribute('content', 'width=1200');
+                } else {
+                    viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0');
+                }
+            }
+        });
 
         // --- Theme Toggle Logic ---
         const themeToggleBtn = document.getElementById('themeToggle');
@@ -328,6 +363,22 @@
                 localStorage.setItem('theme', 'light');
             }
         });
+
+        // Static Reliable Image Links
+        const IMAGES = {
+            intelCPU: "https://c1.neweggimages.com/productimage/nb1280/19-118-462-03.jpg",
+            amdCPU: "https://c1.neweggimages.com/productimage/nb1280/19-113-791-03.png",
+            nvidiaGPU: "https://c1.neweggimages.com/productimage/nb1280/B1AHS221107073TMR4E.jpg",
+            amdGPU: "https://c1.neweggimages.com/productimage/nb1280/14-930-084-06.jpg",
+            corsairRAM: "https://c1.neweggimages.com/productimage/nb1280/20-982-277-04.jpg",
+            gskillRAM: "https://c1.neweggimages.com/productimage/nb1280/20-374-429-13.png",
+            genericRAM: "https://c1.neweggimages.com/productimage/nb1280/20-331-811-06.jpg",
+            asusMobo: "https://c1.neweggimages.com/productimage/nb1280/13-119-597-V01.jpg",
+            msiMobo: "https://c1.neweggimages.com/productimage/nb1280/13-144-561-14.jpg",
+            gigabyteMobo: "https://c1.neweggimages.com/ProductImageCompressAll1280/13-145-415-01.jpg",
+            corsairPSU: "https://c1.neweggimages.com/productimage/nb1280/17-139-333-04.png",
+            evgaPSU: "https://m.media-amazon.com/images/I/61966PqKcoS._AC_UF350,350_QL80_.jpg"
+        };
 
         // --- Mock Database with 64GB RAM Options Removed ---
         let partsDatabase = [
@@ -526,22 +577,18 @@
 
             categories.forEach(cat => {
                 const catProducts = products.filter(p => p.category === cat);
-                if (catProducts.length === 0) return; // Skip if no products match this category
+                if (catProducts.length === 0) return;
 
-                // Create the accordion wrapper
                 const section = document.createElement('details');
                 section.className = 'category-section';
-                section.open = true; // Have them start opened
+                section.open = true;
 
-                // Create the clickable header
                 const summary = document.createElement('summary');
                 summary.innerHTML = `<span>${categoryLabels[cat]} <span style="font-size:1rem; color:var(--text-light); font-weight:normal;">(${catProducts.length} items)</span></span>`;
 
-                // Create the grid for the cards
                 const contentDiv = document.createElement('div');
                 contentDiv.className = 'category-content';
 
-                // Build each card and add it to the category grid
                 catProducts.forEach(part => {
                     const isCompared = comparisonList.includes(part.id);
                     const btnClass = isCompared ? 'btn selected' : 'btn';
@@ -702,13 +749,11 @@
         // --- Event Listeners ---
         searchInput.addEventListener('input', filterProducts);
         
-        // Sync Slider -> Input Box
         priceRange.addEventListener('input', (e) => { 
             priceInput.value = e.target.value; 
             filterProducts(); 
         });
         
-        // Sync Input Box -> Slider
         priceInput.addEventListener('input', (e) => { 
             let val = parseInt(e.target.value);
             if(isNaN(val) || val < 0) val = 3000;
@@ -737,7 +782,6 @@
             }
         });
 
-        // Auto-close filter dropdown on mobile devices on load
         if (window.innerWidth <= 900) {
             document.getElementById('filterMenu').removeAttribute('open');
         }
