@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- The viewport meta tag ensures the page is immediately user-friendly on phones when opened -->
     <meta id="viewportMeta" name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PC Part Compare</title>
     <style>
@@ -13,6 +12,9 @@
             --success: #059669; 
             --success-hover: #047857;
             --danger: #dc2626; 
+            --warning-bg: #fef08a; /* Yellow banner */
+            --warning-text: #854d0e;
+            --warning-border: #fde047;
             --bg: #f8fafc;
             --surface: #ffffff;
             --text: #0f172a;
@@ -29,6 +31,9 @@
             --success: #10b981;
             --success-hover: #34d399;
             --danger: #ef4444;
+            --warning-bg: #713f12; /* Dark yellow/brown banner */
+            --warning-text: #fef08a;
+            --warning-border: #854d0e;
             --bg: #0f172a;      
             --surface: #1e293b; 
             --text: #f8fafc;    
@@ -47,6 +52,18 @@
             margin: 0; padding: 0;
             display: flex; flex-direction: column; min-height: 100vh;
             font-size: 16px; line-height: 1.6; transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* --- Warning Banner --- */
+        .warning-banner {
+            background-color: var(--warning-bg);
+            color: var(--warning-text);
+            border-bottom: 1px solid var(--warning-border);
+            text-align: center;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
         }
 
         header {
@@ -207,7 +224,6 @@
            RESPONSIVE & VIEW TOGGLE STYLES
            ========================================= */
 
-        /* 1. Default Mobile Responsive (Triggers naturally on phones) */
         @media (max-width: 900px) {
             body:not(.force-desktop) .layout { flex-direction: column; padding: 1rem; }
             body:not(.force-desktop) .sidebar { width: 100%; position: relative; top: 0; display: flex; flex-direction: column; gap: 1rem; padding: 1rem; }
@@ -222,7 +238,6 @@
             body:not(.force-desktop) .details-image { max-width: 100%; }
         }
 
-        /* 2. Force Mobile View (Triggered on Desktop when "Phone Mode" is clicked) */
         body.force-mobile .layout { flex-direction: column; padding: 1rem; max-width: 600px; margin: 0 auto; }
         body.force-mobile .sidebar { width: 100%; position: relative; top: 0; display: flex; flex-direction: column; gap: 1rem; padding: 1rem; }
         body.force-mobile .header-controls { flex-direction: column-reverse; width: 100%; align-items: stretch; max-width: 600px; margin: 0 auto; }
@@ -235,12 +250,16 @@
         body.force-mobile .details-body { flex-direction: column; }
         body.force-mobile .details-image { max-width: 100%; }
 
-        /* 3. Force Desktop View (Triggered on Mobile when "PC Mode" is clicked) */
         body.force-desktop { min-width: 1200px; }
 
     </style>
 </head>
 <body>
+
+    <!-- Warning Banner Added Here -->
+    <div class="warning-banner">
+        ⚠️ <strong>Note:</strong> The prices listed below are estimated launch prices, not real-time current market prices.
+    </div>
 
     <header>
         <h2>💻 PC Part Compare</h2>
@@ -249,7 +268,6 @@
                 <input type="text" id="searchInput" aria-label="Search components" placeholder="Search for CPUs, GPUs, RAM...">
             </div>
             <div class="header-buttons">
-                <!-- New Mode Toggle Button -->
                 <button id="viewToggleBtn" class="theme-toggle" aria-label="Toggle PC and Phone View">📱 Phone Mode</button>
                 <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">🌙 Dark Mode</button>
             </div>
@@ -315,29 +333,21 @@
         const viewToggleBtn = document.getElementById('viewToggleBtn');
         const viewportMeta = document.getElementById('viewportMeta');
         
-        // Determine if the screen naturally acts as mobile
         let isMobileMode = window.innerWidth <= 900;
-        
-        // Setup initial text
         viewToggleBtn.innerHTML = isMobileMode ? '💻 PC Mode' : '📱 Phone Mode';
 
         viewToggleBtn.addEventListener('click', () => {
             isMobileMode = !isMobileMode;
             
             if (isMobileMode) {
-                // User wants PHONE mode
                 document.body.classList.remove('force-desktop');
                 document.body.classList.add('force-mobile');
                 viewToggleBtn.innerHTML = '💻 PC Mode';
                 viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0');
             } else {
-                // User wants PC mode
                 document.body.classList.remove('force-mobile');
                 document.body.classList.add('force-desktop');
                 viewToggleBtn.innerHTML = '📱 Phone Mode';
-                
-                // If the actual physical device is small, we force the viewport to be 1200px wide
-                // so the phone is tricked into rendering the full desktop layout!
                 if (window.screen.width <= 900 || window.innerWidth <= 900) {
                     viewportMeta.setAttribute('content', 'width=1200');
                 } else {
@@ -364,23 +374,7 @@
             }
         });
 
-        // Static Reliable Image Links
-        const IMAGES = {
-            intelCPU: "https://c1.neweggimages.com/productimage/nb1280/19-118-462-03.jpg",
-            amdCPU: "https://c1.neweggimages.com/productimage/nb1280/19-113-791-03.png",
-            nvidiaGPU: "https://c1.neweggimages.com/productimage/nb1280/B1AHS221107073TMR4E.jpg",
-            amdGPU: "https://c1.neweggimages.com/productimage/nb1280/14-930-084-06.jpg",
-            corsairRAM: "https://c1.neweggimages.com/productimage/nb1280/20-982-277-04.jpg",
-            gskillRAM: "https://c1.neweggimages.com/productimage/nb1280/20-374-429-13.png",
-            genericRAM: "https://c1.neweggimages.com/productimage/nb1280/20-331-811-06.jpg",
-            asusMobo: "https://c1.neweggimages.com/productimage/nb1280/13-119-597-V01.jpg",
-            msiMobo: "https://c1.neweggimages.com/productimage/nb1280/13-144-561-14.jpg",
-            gigabyteMobo: "https://c1.neweggimages.com/ProductImageCompressAll1280/13-145-415-01.jpg",
-            corsairPSU: "https://c1.neweggimages.com/productimage/nb1280/17-139-333-04.png",
-            evgaPSU: "https://m.media-amazon.com/images/I/61966PqKcoS._AC_UF350,350_QL80_.jpg"
-        };
-
-        // --- Mock Database with 64GB RAM Options Removed ---
+        // --- Mock Database ---
         let partsDatabase = [
             // --- CPUs ---
             { id: 1, name: "Intel Core i9-14900K", category: "CPU", price: 589, powerDraw: 253, image: "https://c1.neweggimages.com/productimage/nb1280/19-118-462-03.jpg", specs: "24 Cores (8P+16E), 32 Threads, Up to 6.0 GHz" },
