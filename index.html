@@ -227,7 +227,6 @@
         .compat-error ul { margin-bottom: 0; }
         .compat-error li { margin-bottom: 0.5rem; }
         
-        /* New Warning Styles */
         .compat-warning { background-color: var(--warning-bg); color: var(--warning-text); border: 2px solid var(--warning-border); padding: 1.25rem; border-radius: 8px; margin-bottom: 1.5rem; }
         .compat-warning h3 { margin-top: 0; color: var(--warning-text); }
         .compat-warning ul { margin-bottom: 0; }
@@ -320,7 +319,7 @@
         </main>
     </div>
 
-    <!-- Floating Button -->
+    <!-- Re-named Floating Button -->
     <button id="floatingCompareBtn" class="floating-btn">PC Builder / Compare (0)</button>
 
     <!-- Comparison Modal -->
@@ -563,7 +562,7 @@
         partsDatabase = partsDatabase.map(part => {
             let dimensions = "Not specified";
             let extendedDetails = {};
-            let compat = { cpuGen: null, chipset: null, socket: null, ramType: null, formFactor: null, maxFormFactor: null, length: 0, height: 0, isAIO: false, maxGpuLength: 0, maxCoolerHeight: 0 };
+            let compat = { cpuGen: null, chipset: null, socket: null, ramType: null, formFactor: null, maxFormFactor: null, length: 0, height: 0, isAIO: false, maxGpuLength: 0, maxCoolerHeight: 0, psuType: null };
 
             if (part.category === 'GPU') {
                 compat.length = part.name.includes('4090') ? 342 : 300; 
@@ -618,6 +617,7 @@
             else if (part.category === 'PSU') {
                 dimensions = part.specs.includes('SFX') ? "125mm x 100mm x 63.5mm" : "150mm x 160mm x 86mm";
                 extendedDetails = { "Form Factor": part.specs.includes('SFX') ? "SFX" : "ATX", "Fan Size": "135mm FDB Fan", "Cabling": "Fully Modular" };
+                compat.psuType = part.specs.includes('SFX') ? 'SFX' : 'ATX';
             } 
             else if (part.category === 'Case') {
                 dimensions = "460mm x 225mm x 490mm (Avg)";
@@ -625,6 +625,7 @@
                 
                 compat.maxGpuLength = part.name.includes('Q300L') ? 320 : 380;
                 compat.maxCoolerHeight = part.name.includes('Q300L') ? 159 : 165;
+                compat.psuType = part.specs.includes('Mini-ITX') ? 'SFX' : 'ATX';
 
                 if (part.specs.includes('E-ATX')) compat.maxFormFactor = 3;
                 else if (part.specs.includes('Micro-ATX')) compat.maxFormFactor = 1;
@@ -672,12 +673,11 @@
                 }
             });
 
-            // CPU & Motherboard Checks
+            // 1. CPU & Motherboard Checks
             if (cpu && mobo) {
                 if (cpu.compat.socket !== mobo.compat.socket) {
                     errors.push(`<strong>Socket Mismatch:</strong> The ${cpu.name} uses the ${cpu.compat.socket} socket, but the ${mobo.name} has an ${mobo.compat.socket} socket. They will not physically fit together.`);
                 } else {
-                    // Out-of-the-box BIOS checks
                     if (cpu.compat.cpuGen === 'Intel 14th Gen' && mobo.compat.chipset === 'Intel 700 Series') {
                         warnings.push(`<strong>BIOS Update Likely Required:</strong> The ${mobo.name} may require a BIOS update to boot with the ${cpu.name} (14th Gen) out of the box. Ensure the board has a "BIOS Flashback" feature to update without an older CPU.`);
                     }
@@ -687,14 +687,14 @@
                 }
             }
 
-            // RAM Checks
+            // 2. RAM Checks
             if (mobo && ram) {
                 if (mobo.compat.ramType !== 'DDR4/DDR5' && mobo.compat.ramType !== ram.compat.ramType) {
                     errors.push(`<strong>RAM Mismatch:</strong> The ${mobo.name} supports ${mobo.compat.ramType} memory, but the ${ram.name} is a ${ram.compat.ramType} kit.`);
                 }
             }
 
-            // Case Clearance Checks
+            // 3. Case Clearance Checks
             if (pcase) {
                 if (mobo) {
                     if (mobo.compat.formFactor > pcase.compat.maxFormFactor) {
@@ -716,8 +716,17 @@
                     }
                 }
             }
+            
+            // 4. Case & PSU Physical Compatibility
+            if (pcase && psu) {
+                if (pcase.compat.psuType === 'SFX' && psu.compat.psuType === 'ATX') {
+                    errors.push(`<strong>PSU Size Mismatch:</strong> The ${pcase.name} requires an SFX power supply, but the ${psu.name} is a standard ATX size and will not physically fit.`);
+                } else if (pcase.compat.psuType === 'ATX' && psu.compat.psuType === 'SFX') {
+                    warnings.push(`<strong>PSU Size Warning:</strong> The ${psu.name} is a small form factor (SFX) power supply, but the ${pcase.name} is a standard case. It may require an adapter bracket, and the included cables might be too short.`);
+                }
+            }
 
-            // Power Supply Checks
+            // 5. Power Supply Math Check
             if (psu) {
                 let estimatedTotal = totalPower + 100; // Adding buffer for motherboard/fans
                 if (estimatedTotal > psu.powerDraw) {
@@ -912,7 +921,6 @@
                         if(issues.errors.length > 0) {
                             compatHtml += '</div><div class="compat-warning">';
                         } else {
-                            // change class to warning if only warnings exist
                             compatHtml = compatHtml.replace('compat-error', 'compat-warning');
                         }
                         compatHtml += '<h3>⚠️ Warnings & Notes</h3>';
