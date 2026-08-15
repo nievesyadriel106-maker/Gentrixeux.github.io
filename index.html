@@ -81,10 +81,33 @@
             position: sticky; top: 100px;
         }
         .filter-group { margin-bottom: 2rem; }
-        .filter-group h3 { margin-top: 0; font-size: 1.2rem; margin-bottom: 1rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; }
+        .filter-group h3 { 
+            margin-top: 0; font-size: 1.2rem; margin-bottom: 1rem; 
+            border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; 
+            display: flex; align-items: center; gap: 0.5rem;
+        }
         .filter-label { display: flex; align-items: center; margin-bottom: 0.75rem; cursor: pointer; font-size: 1.05rem; }
         .filter-label input[type="checkbox"] { width: 1.25rem; height: 1.25rem; margin-right: 0.75rem; cursor: pointer; }
+        
         input[type="range"] { width: 100%; height: 8px; border-radius: 4px; cursor: pointer; }
+        
+        /* New styling for the number input */
+        .price-input {
+            width: 80px;
+            padding: 0.35rem 0.5rem;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            background-color: var(--bg);
+            color: var(--text);
+            font-size: 1.1rem;
+            font-weight: bold;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        .price-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
 
         .main-content { flex: 1; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
@@ -189,8 +212,10 @@
             </div>
 
             <div class="filter-group">
-                <h3>Max Price: $<span id="priceValue">2500</span></h3>
-                <input type="range" id="priceRange" min="50" max="2500" value="2500" aria-label="Adjust maximum price">
+                <h3>Max Price: $
+                    <input type="number" id="priceInput" class="price-input" min="50" max="3000" value="2500" aria-label="Type maximum price">
+                </h3>
+                <input type="range" id="priceRange" min="50" max="3000" value="2500" aria-label="Adjust maximum price slider">
             </div>
         </aside>
 
@@ -226,6 +251,22 @@
     </div>
 
     <script>
+        // Static Reliable Image Links (Real Product Images)
+        const IMAGES = {
+            intelCPU: "https://m.media-amazon.com/images/I/61NlMknXm7L._AC_SL1500_.jpg",
+            amdCPU: "https://m.media-amazon.com/images/I/616q1Q5Z71L._AC_SL1500_.jpg",
+            nvidiaGPU: "https://m.media-amazon.com/images/I/81X0F+OudtL._AC_SL1500_.jpg",
+            amdGPU: "https://m.media-amazon.com/images/I/81V+t1jFmVL._AC_SL1500_.jpg",
+            corsairRAM: "https://m.media-amazon.com/images/I/61oXm-WzU8L._AC_SL1500_.jpg",
+            gskillRAM: "https://m.media-amazon.com/images/I/61gG8P0qWCL._AC_SL1500_.jpg",
+            genericRAM: "https://m.media-amazon.com/images/I/619T-N-D69L._AC_SL1500_.jpg",
+            asusMobo: "https://m.media-amazon.com/images/I/81O+z8mS78L._AC_SL1500_.jpg",
+            msiMobo: "https://m.media-amazon.com/images/I/81c0HOfbIYL._AC_SL1500_.jpg",
+            gigabyteMobo: "https://m.media-amazon.com/images/I/817E1o5p1vL._AC_SL1500_.jpg",
+            corsairPSU: "https://m.media-amazon.com/images/I/61c1G9P9y9L._AC_SL1500_.jpg",
+            evgaPSU: "https://m.media-amazon.com/images/I/71zB6yXqQ1L._AC_SL1500_.jpg"
+        };
+
         // --- Theme Toggle Logic ---
         const themeToggleBtn = document.getElementById('themeToggle');
         const currentTheme = localStorage.getItem('theme');
@@ -244,7 +285,7 @@
             }
         });
 
-        // --- Mock Database with specific images mapped ---
+        // --- Mock Database with 64GB RAM Options Removed ---
         let partsDatabase = [
             // --- CPUs ---
             { id: 1, name: "Intel Core i9-14900K", category: "CPU", price: 589, powerDraw: 253, image: "https://c1.neweggimages.com/productimage/nb1280/19-118-462-03.jpg", specs: "24 Cores (8P+16E), 32 Threads, Up to 6.0 GHz" },
@@ -410,7 +451,7 @@
         const grid = document.getElementById('productGrid');
         const searchInput = document.getElementById('searchInput');
         const priceRange = document.getElementById('priceRange');
-        const priceValue = document.getElementById('priceValue');
+        const priceInput = document.getElementById('priceInput');
         const categoryCheckboxes = document.querySelectorAll('.category-filter');
         const floatingCompareBtn = document.getElementById('floatingCompareBtn');
         const compareModal = document.getElementById('compareModal');
@@ -569,7 +610,7 @@
         // --- Filter Logic ---
         function filterProducts() {
             const searchTerm = searchInput.value.toLowerCase();
-            const maxPrice = parseInt(priceRange.value);
+            const maxPrice = parseInt(priceInput.value) || 3000;
             const activeCategories = Array.from(categoryCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
 
             currentFilteredProducts = partsDatabase.filter(part => {
@@ -584,7 +625,20 @@
 
         // --- Event Listeners ---
         searchInput.addEventListener('input', filterProducts);
-        priceRange.addEventListener('input', (e) => { priceValue.textContent = e.target.value; filterProducts(); });
+        
+        // Sync Slider -> Input Box
+        priceRange.addEventListener('input', (e) => { 
+            priceInput.value = e.target.value; 
+            filterProducts(); 
+        });
+        
+        // Sync Input Box -> Slider
+        priceInput.addEventListener('input', (e) => { 
+            let val = parseInt(e.target.value);
+            if(isNaN(val) || val < 0) val = 3000; // default fallback if empty
+            priceRange.value = val;
+            filterProducts(); 
+        });
         
         categoryCheckboxes.forEach(cb => {
             cb.addEventListener('change', filterProducts);
